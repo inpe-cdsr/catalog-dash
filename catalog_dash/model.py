@@ -2,38 +2,23 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import text
-
+import pymysql
 from werkzeug.exceptions import InternalServerError
+from pandas import read_sql
 
 from catalog_dash.environment import MYSQL_DB_USER, MYSQL_DB_PASSWORD, MYSQL_DB_HOST, \
                                      MYSQL_DB_PORT, MYSQL_DB_DATABASE
 from catalog_dash.log import logging
 
-# logging.info('model.py - MYSQL_DB_USER: %s', MYSQL_DB_USER)
-# logging.info('model.py - MYSQL_DB_PASSWORD: %s', MYSQL_DB_PASSWORD)
-# logging.info('model.py - MYSQL_DB_HOST: %s', MYSQL_DB_HOST)
-# logging.info('model.py - MYSQL_DB_PORT: %s', MYSQL_DB_PORT)
-# logging.info('model.py - MYSQL_DB_DATABASE: %s\n', MYSQL_DB_DATABASE)
-
-# def fix_rows(rows):
-#     for row in rows:
-#         for key in row:
-#             # datetime/date is not serializable by default, then it gets a serializable string representation
-#             if isinstance(row[key], (datetime, date)):
-#                 row[key] = row[key].isoformat()
-
-#     return rows
 
 class DatabaseConnection():
-    # Source: https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
 
     def __init__(self):
         self.engine = None
 
     def connect(self):
         try:
-            self.engine = create_engine('mysql://{}:{}@{}:{}/{}'.format(
+            self.engine = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(
                 MYSQL_DB_USER, MYSQL_DB_PASSWORD, MYSQL_DB_HOST,
                 MYSQL_DB_PORT, MYSQL_DB_DATABASE
             ))
@@ -68,47 +53,20 @@ class DatabaseConnection():
             self.close()
             raise DatabaseConnectionException('Connection was not opened to the database.')
 
-    def execute(self, query, params=None, is_transaction=False):
+    def execute(self, query):
         logging.info('DatabaseConnection.execute()')
 
-        # sometimes there are a lot of blank spaces, then I remove it
-        query = query.replace('            ', '')
-
-        # logging.info('DatabaseConnection.execute() - query: %s', query)
-        # logging.debug('DatabaseConnection.execute() - params: %s', params)
-        logging.info('DatabaseConnection.execute() - is_transaction: %s', is_transaction)
-
         try:
-            # if query is a transaction statement, then commit the changes
-            if is_transaction:
-                query_text = text(query).execution_options(autocommit=True)
-            else:
-                query_text = text(query)
-
-            logging.info('DatabaseConnection.execute() - query_text: %s', query_text)
+            logging.info('DatabaseConnection.execute() - query: %s', query)
 
             self.try_to_connect()
 
-            # cursor.execute(query, params=params)
-            result = self.engine.execute(query_text, params)
+            df = read_sql(query, con=self.engine)
 
-            logging.info('DatabaseConnection.execute() - result.returns_rows: %s', result.returns_rows)
-            logging.info('DatabaseConnection.execute() - result.rowcount: %s', result.rowcount)
-            logging.info('DatabaseConnection.execute() - result.lastrowid: %s', result.lastrowid)
+            logging.info('DatabaseConnection.execute() - df.head(): \n%s\n', df.head())
+            logging.info('DatabaseConnection.execute() - df.shape: %s', df.shape)
 
-            if result.returns_rows:
-                # SELECT clause
-                rows = result.fetchall()
-                rows = [dict(row) for row in rows]
-
-                # logging.info('DatabaseConnection.execute() - rows: \n%s\n', rows)
-
-                return rows
-            else:
-                # INSERT, UPDATE and DELETE operations need to be committed
-                # if 'query' was a 'INSERT' statement, then it returns the inserted record 'id',
-                # else it returns '0'
-                return str(result.lastrowid)
+            return df
 
         except SQLAlchemyError as error:
             # self.rollback()
@@ -125,12 +83,6 @@ class DatabaseConnection():
         # finally is always executed (both at try and except)
         finally:
             self.close()
-            # print('Database connection was closed.')
 
     def select_from_graph_amount_scenes_by_dataset_and_date(self):
-        query = '''
-            SELECT * FROM `graph_amount_scenes_by_dataset_and_date`;
-        '''
-
-        # return fix_rows(self.execute(query, params))
-        return self.execute(query, {})
+        return self.execute('SELECT * FROM `graph_amount_scenes_by_dataset_and_date`;')
