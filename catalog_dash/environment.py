@@ -7,17 +7,14 @@ from logging import DEBUG, INFO
 os_environ_get = environ.get
 
 
-FLASK_ENV = os_environ_get('FLASK_ENV', 'production')
+DEBUG_MODE = bool(os_environ_get('DEBUG_MODE', 'False'))
 
 # default logging level in production server
 LOGGING_LEVEL = INFO
-# default debug mode in production server
-DEBUG_MODE = False
 
 # if the application is in development mode, then change the logging level and debug mode
-if FLASK_ENV == 'development':
+if DEBUG_MODE:
     LOGGING_LEVEL = DEBUG
-    DEBUG_MODE = True
 
 # MYSQL connection
 MYSQL_DB_USER = os_environ_get('MYSQL_DB_USER', 'test')
