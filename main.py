@@ -1,22 +1,45 @@
 # -*- coding: utf-8 -*-
 
-import dash
+from dash import Dash
 import dash_core_components as dcc
 import dash_html_components as html
+
 import pandas as pd
+
+from catalog_dash.model import DatabaseConnection
+from catalog_dash.log import logging
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+
+db = DatabaseConnection()
+
+results = db.select_from_graph_amount_scenes_by_dataset_and_date()
+
+# logging.info('main.py - results: %s', results)
+# [
+# {'amount': 26, 'dataset': 'CBERS4A_MUX_L2_DN', 'date': datetime.date(2019, 12, 27)},
+# {'amount': 35, 'dataset': 'CBERS4A_MUX_L2_DN', 'date': datetime.date(2019, 12, 29)},
+# {'amount': 59, 'dataset': 'CBERS4A_MUX_L2_DN', 'date': datetime.date(2019, 12, 30)},
+# {'amount': 33, 'dataset': 'CBERS4A_MUX_L2_DN', 'date': datetime.date(2019, 12, 31)},
+# {'amount': 39, 'dataset': 'CBERS4A_MUX_L2_DN', 'date': datetime.date(2020, 1, 1)},
+# ...
+# ]
+
+
+
 
 df = pd.read_csv('https://gist.githubusercontent.com/chriddyp/5d1ea79569ed194d432e56108a04d188/raw/a9f9e8076b837d541398e999dcbac2b2826a81f8/gdp-life-exp-2007.csv')
 
-# print('\n df: \n', df.head())
-# print('\n continents: ', df.continent.unique())
-# print('\n Europe: : \n', df[df['continent'] == 'Europe'].head())
-# print('\n gdp per capita: : \n', df[df['continent'] == 'Europe']['gdp per capita'].head())
-# print('\n life expectancy: : \n', df[df['continent'] == 'Europe']['life expectancy'].head())
-# print('\n country: : \n', df[df['continent'] == 'Europe']['country'].head())
+print('\n df: \n', df.head())
+print('\n continents: ', df.continent.unique())
+print('\n Europe: : \n', df[df['continent'] == 'Europe'].head())
+print('\n gdp per capita: : \n', df[df['continent'] == 'Europe']['gdp per capita'].head())
+print('\n life expectancy: : \n', df[df['continent'] == 'Europe']['life expectancy'].head())
+print('\n country: : \n', df[df['continent'] == 'Europe']['country'].head())
 
 app.layout = html.Div([
     dcc.Graph(
