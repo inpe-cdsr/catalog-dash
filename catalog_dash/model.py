@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from pandas import read_sql
+import pymysql
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
-import pymysql
 from werkzeug.exceptions import InternalServerError
-from pandas import read_sql
 
 from catalog_dash.environment import MYSQL_DB_USER, MYSQL_DB_PASSWORD, MYSQL_DB_HOST, \
                                      MYSQL_DB_PORT, MYSQL_DB_DATABASE

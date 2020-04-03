@@ -1,1 +1,1 @@
-alert('Welcome to catalog-dash!')
+// alert('Welcome to catalog-dash!')
