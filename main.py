@@ -44,15 +44,18 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     ),
 
     # date picker range
-    # Source: https://dash.plotly.com/dash-core-components/datepickerrange
-    DatePickerRange(
-        id='date-picker-range',
-        display_format='DD/MM/YYYY',
-        min_date_allowed=start_date,
-        max_date_allowed=end_date,
-        start_date=start_date,
-        end_date=end_date
-    ),
+    Div([
+        # Source: https://dash.plotly.com/dash-core-components/datepickerrange
+        DatePickerRange(
+            id='date-picker-range',
+            display_format='DD/MM/YYYY',
+            min_date_allowed=start_date,
+            max_date_allowed=end_date,
+            start_date=start_date,
+            end_date=end_date
+        ),
+
+    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     H3(
         id='output-container-date-picker-range',
         style={
@@ -70,7 +73,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     Output('output-container-date-picker-range', 'children'),
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
-def update_output(start_date, end_date):
+def update_output_container_date_picker_range(start_date, end_date):
     # Source: https://dash.plotly.com/dash-core-components/datepickerrange
 
     string_prefix = ''
