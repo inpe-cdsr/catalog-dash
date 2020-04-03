@@ -7,7 +7,7 @@ from catalog_dash.utils import colors, get_text
 
 def get_graph_amount_of_scenes(df):
     return Graph(
-        id='graph-01',
+        id='graph_amount_of_scenes',
         figure={
             'data': [
                 {
@@ -17,10 +17,7 @@ def get_graph_amount_of_scenes(df):
                     'text': get_text(df, dataset),
                     'mode': 'lines+markers',
                     'opacity': 0.7,
-                    'marker': {
-                        'size': 7,
-                        # 'line': {'width': 0.5, 'color': 'white'}
-                    },
+                    'marker': {'size': 7},
                     'name': dataset
                 } for dataset in df.dataset.unique()
             ],

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from pandas import read_sql
+from pandas import read_sql, to_datetime
+
 import pymysql
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -63,9 +64,9 @@ class DatabaseConnection():
 
             df = read_sql(query, con=self.engine)
 
-            logging.info('DatabaseConnection.execute() - df.head(): \n%s\n', df.head())
-            logging.info('DatabaseConnection.execute() - df.shape: %s\n', df.shape)
-            logging.info('DatabaseConnection.execute() - df.dtypes: \n%s\n', df.dtypes)
+            # logging.info('DatabaseConnection.execute() - df.head(): \n%s\n', df.head())
+            # logging.info('DatabaseConnection.execute() - df.shape: %s\n', df.shape)
+            # logging.info('DatabaseConnection.execute() - df.dtypes: \n%s\n', df.dtypes)
 
             return df
 
@@ -86,4 +87,9 @@ class DatabaseConnection():
             self.close()
 
     def select_from_graph_amount_scenes_by_dataset_and_date(self):
-        return self.execute('SELECT * FROM `graph_amount_scenes_by_dataset_and_date`;')
+        df = self.execute('SELECT * FROM `graph_amount_scenes_by_dataset_and_date`;')
+
+        # convert date, from `str` to a `datetime`
+        df['date'] = to_datetime(df['date'])
+
+        return df
