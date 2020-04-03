@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime as dt
-import re
-
 from dash import Dash
 from dash_core_components import Dropdown, RadioItems, DatePickerRange
 from dash.dependencies import Output, Input
@@ -12,7 +9,7 @@ from catalog_dash.components import get_graph_amount_of_scenes
 from catalog_dash.environment import DEBUG_MODE
 from catalog_dash.log import logging
 from catalog_dash.model import DatabaseConnection
-from catalog_dash.utils import colors, external_stylesheets
+from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string
 
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
@@ -53,8 +50,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
             max_date_allowed=end_date,
             start_date=start_date,
             end_date=end_date
-        ),
-
+        )
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     H3(
         id='output-container-date-picker-range',
@@ -79,14 +75,10 @@ def update_output_container_date_picker_range(start_date, end_date):
     string_prefix = ''
 
     if start_date is not None:
-        start_date = dt.strptime(re.split('T| ', start_date)[0], '%Y-%m-%d')
-        start_date_string = start_date.strftime('%B %d, %Y')
-        string_prefix = string_prefix + 'Start Date: ' + start_date_string + ' | '
+        string_prefix += 'Start Date: ' + get_formatted_date_as_string(start_date) + ' | '
 
     if end_date is not None:
-        end_date = dt.strptime(re.split('T| ', end_date)[0], '%Y-%m-%d')
-        end_date_string = end_date.strftime('%B %d, %Y')
-        string_prefix = string_prefix + 'End Date: ' + end_date_string
+        string_prefix += 'End Date: ' + get_formatted_date_as_string(end_date)
 
     if string_prefix == '':
         return 'Select a date to see it displayed here'
