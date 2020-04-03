@@ -54,17 +54,18 @@ class DatabaseConnection():
             raise DatabaseConnectionException('Connection was not opened to the database.')
 
     def execute(self, query):
-        logging.info('DatabaseConnection.execute()')
+        logging.info('DatabaseConnection.execute()\n')
 
         try:
-            logging.info('DatabaseConnection.execute() - query: %s', query)
+            logging.info('DatabaseConnection.execute() - query: %s\n', query)
 
             self.try_to_connect()
 
             df = read_sql(query, con=self.engine)
 
             logging.info('DatabaseConnection.execute() - df.head(): \n%s\n', df.head())
-            logging.info('DatabaseConnection.execute() - df.shape: %s', df.shape)
+            logging.info('DatabaseConnection.execute() - df.shape: %s\n', df.shape)
+            logging.info('DatabaseConnection.execute() - df.dtypes: \n%s\n', df.dtypes)
 
             return df
 
