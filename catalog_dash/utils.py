@@ -27,6 +27,7 @@ def get_text(df, dataset):
 
     return concat_df
 
+
 def get_formatted_date_as_string(date_string, output_format='%d/%m/%Y'):
     # get the date as datetime
     date = dt.strptime(re.split('T| ', date_string)[0], '%Y-%m-%d')

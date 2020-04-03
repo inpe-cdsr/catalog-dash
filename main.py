@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime as dt
+from dateutil.relativedelta import relativedelta
+import re
+
 from dash import Dash
-from dash_core_components import Dropdown, RadioItems, DatePickerRange
+from dash_core_components import Graph, Dropdown, RadioItems, DatePickerRange
 from dash.dependencies import Output, Input
 from dash_html_components import Div, H1, H3
 
-from catalog_dash.components import get_graph_amount_of_scenes
+from catalog_dash.components import get_figure_of_graph_amount_of_scenes
 from catalog_dash.environment import DEBUG_MODE
 from catalog_dash.log import logging
 from catalog_dash.model import DatabaseConnection
@@ -22,12 +26,12 @@ logging.info('main.py - df.head(): \n%s\n', df.head())
 logging.info('main.py - df.shape: %s\n', df.shape)
 logging.info('main.py - df.dtypes: \n%s\n', df.dtypes)
 
+# get the min start date and the max end date to the graph
+min_start_date = df['date'].min()
+max_end_date = df['date'].max()
 
-start_date = df['date'].min()
-end_date = df['date'].max()
-
-logging.info('main.py - start_date: %s', start_date)
-logging.info('main.py - end_date: %s', end_date)
+logging.info('main.py - min_start_date: %s', min_start_date)
+logging.info('main.py - max_end_date: %s', max_end_date)
 
 
 app.layout = Div(style={'backgroundColor': colors['background']}, children=[
@@ -46,10 +50,10 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         DatePickerRange(
             id='date-picker-range',
             display_format='DD/MM/YYYY',
-            min_date_allowed=start_date,
-            max_date_allowed=end_date,
-            start_date=start_date,
-            end_date=end_date
+            min_date_allowed=min_start_date,
+            max_date_allowed=max_end_date,
+            start_date=min_start_date,
+            end_date=max_end_date
         )
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     H3(
@@ -61,7 +65,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     ),
 
     # main graph
-    get_graph_amount_of_scenes(df)
+    Graph(id='graph-amount-of-scenes')
 ])
 
 
@@ -84,6 +88,38 @@ def update_output_container_date_picker_range(start_date, end_date):
         return 'Select a date to see it displayed here'
 
     return string_prefix
+
+
+@app.callback(
+    Output('graph-amount-of-scenes', 'figure'),
+    [Input('date-picker-range', 'start_date'),
+    Input('date-picker-range', 'end_date')])
+def update_graph_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
+    logging.info('update_graph_amount_of_scenes()\n')
+
+    logging.info('update_graph_amount_of_scenes() - start_date: %s', start_date)
+    logging.info('update_graph_amount_of_scenes() - end_date: %s', end_date)
+
+    # convert the [start|end]_date from str to datetime
+    start_date = dt.strptime(re.split('T| ', start_date)[0], '%Y-%m-%d')
+    end_date = dt.strptime(re.split('T| ', end_date)[0], '%Y-%m-%d')
+
+    if start_date is None or start_date < min_start_date:
+        raise Exception('The inserted start date is less than the minimum possible start date or it is None.')
+
+    if end_date is None or end_date > max_end_date:
+        raise Exception('The inserted end date is greater than the maximum possible end date or it is None.')
+
+    # substract and add months in order to make the graph look better
+    start_date -= relativedelta(months=6)
+    end_date += relativedelta(months=6)
+
+    # convert the dates from datetime to str again in order to pass the xaxis range to build the figure
+    xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]
+
+    logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
+
+    return get_figure_of_graph_amount_of_scenes(df, xaxis_range=xaxis_range)
 
 
 if __name__ == '__main__':
