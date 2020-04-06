@@ -7,19 +7,26 @@ from dash import Dash
 from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
 from dash_html_components import Div, H1, H3
+from flask import Flask, redirect
 
 from catalog_dash.components import get_figure_of_graph_time_series_amount_of_scenes, \
                                     get_figure_of_graph_bubble_map_amount_of_scenes
-from catalog_dash.environment import DEBUG_MODE
+from catalog_dash.environment import DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
 from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string
 
+server = Flask(__name__)
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+@server.route('/')
+def index():
+    return redirect('/catalog-dash/')
+
+app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, url_base_pathname='/catalog-dash/')
+app.css.append_css({"external_url": ["./assets/common.css"]})
+
 db = DatabaseConnection()
-
 df = db.select_from_graph_amount_scenes_by_dataset_and_date()
 
 
@@ -127,4 +134,4 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
 
 if __name__ == '__main__':
-    app.run_server(debug=DEBUG_MODE)
+    app.run_server(debug=DEBUG_MODE, host=SERVER_HOST, port=SERVER_PORT)

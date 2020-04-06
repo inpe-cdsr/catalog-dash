@@ -9,6 +9,9 @@ os_environ_get = environ.get
 
 DEBUG_MODE = bool(os_environ_get('DEBUG_MODE', 'False'))
 
+SERVER_HOST = os_environ_get('SERVER_HOST', '0.0.0.0')
+SERVER_PORT = int(os_environ_get('SERVER_PORT', 8050))
+
 # default logging level in production server
 LOGGING_LEVEL = INFO
 
