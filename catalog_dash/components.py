@@ -3,7 +3,8 @@
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 
-from catalog_dash.log import logging
+from catalog_dash.exception import CatalogDashException
+from catalog_dash.logging import logging
 from catalog_dash.utils import colors, get_text
 
 
@@ -42,7 +43,7 @@ def get_figure_of_graph_amount_of_scenes(df, xaxis_range=[]):
         xaxis['range'] = xaxis_range
 
     else:
-        raise Exception('Invalid `xaxis_range`, it is empty!')
+        raise CatalogDashException('Invalid `xaxis_range`, it is empty!')
 
     return {
         'data': [
@@ -50,7 +51,7 @@ def get_figure_of_graph_amount_of_scenes(df, xaxis_range=[]):
                 'x': df[(df['dataset'] == dataset) & (logical_date_range)]['date'],
                 'y': df[(df['dataset'] == dataset) & (logical_date_range)]['amount'],
                 # text=df[df['continent'] == i]['country'],
-                'text': get_text(df, dataset),
+                'text': get_text(df[(df['dataset'] == dataset) & (logical_date_range)]),
                 'mode': 'lines+markers',
                 'opacity': 0.7,
                 'marker': {'size': 7},

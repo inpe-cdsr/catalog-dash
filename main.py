@@ -10,7 +10,8 @@ from dash_html_components import Div, H1, H3
 
 from catalog_dash.components import get_figure_of_graph_amount_of_scenes
 from catalog_dash.environment import DEBUG_MODE
-from catalog_dash.log import logging
+from catalog_dash.exception import CatalogDashException
+from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
 from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string
 
@@ -104,10 +105,10 @@ def update_graph_amount_of_scenes_based_on_date_picker_range(start_date, end_dat
     end_date = dt.strptime(split('T| ', end_date)[0], '%Y-%m-%d')
 
     if start_date is None or start_date < min_start_date:
-        raise Exception('The inserted start date is less than the minimum possible start date or it is None.')
+        raise CatalogDashException('The inserted start date is less than the minimum possible start date or it is None.')
 
     if end_date is None or end_date > max_end_date:
-        raise Exception('The inserted end date is greater than the maximum possible end date or it is None.')
+        raise CatalogDashException('The inserted end date is greater than the maximum possible end date or it is None.')
 
     # convert the dates from datetime to str again in order to pass the xaxis range to build the figure
     xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]

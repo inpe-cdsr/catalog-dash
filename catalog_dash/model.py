@@ -9,7 +9,7 @@ from werkzeug.exceptions import InternalServerError
 
 from catalog_dash.environment import MYSQL_DB_USER, MYSQL_DB_PASSWORD, MYSQL_DB_HOST, \
                                      MYSQL_DB_PORT, MYSQL_DB_DATABASE
-from catalog_dash.log import logging
+from catalog_dash.logging import logging
 
 
 class DatabaseConnection():
