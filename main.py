@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime as dt
-from dateutil.relativedelta import relativedelta
-import re
+from re import split
 
 from dash import Dash
-from dash_core_components import Graph, Dropdown, RadioItems, DatePickerRange
+from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
 from dash_html_components import Div, H1, H3
 
@@ -27,8 +26,8 @@ logging.info('main.py - df.shape: %s\n', df.shape)
 logging.info('main.py - df.dtypes: \n%s\n', df.dtypes)
 
 # get the min start date and the max end date to the graph
-min_start_date = df['date'].min()
-max_end_date = df['date'].max()
+min_start_date = df['date'].min()  # min_start_date: 2016-05-01 00:00:00
+max_end_date = df['date'].max()  # max_end_date: 2020-03-03 00:00:00
 
 logging.info('main.py - min_start_date: %s', min_start_date)
 logging.info('main.py - max_end_date: %s', max_end_date)
@@ -101,18 +100,14 @@ def update_graph_amount_of_scenes_based_on_date_picker_range(start_date, end_dat
     logging.info('update_graph_amount_of_scenes() - end_date: %s', end_date)
 
     # convert the [start|end]_date from str to datetime
-    start_date = dt.strptime(re.split('T| ', start_date)[0], '%Y-%m-%d')
-    end_date = dt.strptime(re.split('T| ', end_date)[0], '%Y-%m-%d')
+    start_date = dt.strptime(split('T| ', start_date)[0], '%Y-%m-%d')
+    end_date = dt.strptime(split('T| ', end_date)[0], '%Y-%m-%d')
 
     if start_date is None or start_date < min_start_date:
         raise Exception('The inserted start date is less than the minimum possible start date or it is None.')
 
     if end_date is None or end_date > max_end_date:
         raise Exception('The inserted end date is greater than the maximum possible end date or it is None.')
-
-    # substract and add months in order to make the graph look better
-    start_date -= relativedelta(months=6)
-    end_date += relativedelta(months=6)
 
     # convert the dates from datetime to str again in order to pass the xaxis range to build the figure
     xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]
