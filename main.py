@@ -8,7 +8,8 @@ from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
 from dash_html_components import Div, H1, H3
 
-from catalog_dash.components import get_figure_of_graph_amount_of_scenes
+from catalog_dash.components import get_figure_of_graph_time_series_amount_of_scenes, \
+                                    get_figure_of_graph_bubble_map_amount_of_scenes
 from catalog_dash.environment import DEBUG_MODE
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
@@ -64,8 +65,11 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         }
     ),
 
-    # main graph
-    Graph(id='graph-amount-of-scenes')
+    # graph-time-series-amount-of-scenes
+    Graph(id='graph-time-series-amount-of-scenes'),
+
+    # graph-bubble-map-amount-of-scenes
+    # Graph(id='graph-bubble-map-amount-of-scenes')
 ])
 
 
@@ -91,10 +95,12 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    Output('graph-amount-of-scenes', 'figure'),
+    Output('graph-time-series-amount-of-scenes', 'figure'),
+    # [Output('graph-time-series-amount-of-scenes', 'figure'),
+    # Output('graph-bubble-map-amount-of-scenes', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
-def update_graph_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
+def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
     logging.info('update_graph_amount_of_scenes()\n')
 
     logging.info('update_graph_amount_of_scenes() - start_date: %s', start_date)
@@ -115,7 +121,9 @@ def update_graph_amount_of_scenes_based_on_date_picker_range(start_date, end_dat
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    return get_figure_of_graph_amount_of_scenes(df, xaxis_range=xaxis_range)
+    return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range)
+    # return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range), \
+    #        get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=xaxis_range)
 
 
 if __name__ == '__main__':

@@ -2,13 +2,14 @@
 
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
+import plotly.express as px
 
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.utils import colors, get_text
 
 
-def get_figure_of_graph_amount_of_scenes(df, xaxis_range=[]):
+def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_amount_of_scenes()\n')
 
     logical_date_range = None
@@ -50,7 +51,6 @@ def get_figure_of_graph_amount_of_scenes(df, xaxis_range=[]):
             {
                 'x': df[(df['dataset'] == dataset) & (logical_date_range)]['date'],
                 'y': df[(df['dataset'] == dataset) & (logical_date_range)]['amount'],
-                # text=df[df['continent'] == i]['country'],
                 'text': get_text(df[(df['dataset'] == dataset) & (logical_date_range)]),
                 'mode': 'lines+markers',
                 'opacity': 0.7,
@@ -71,3 +71,52 @@ def get_figure_of_graph_amount_of_scenes(df, xaxis_range=[]):
             }
         }
     }
+
+
+def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
+
+    import plotly.graph_objects as go
+
+    import pandas as pd
+
+    df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_us_cities.csv')
+    df.head()
+
+    logging.info('get_figure_of_graph_amount_of_scenes() - df.head(): \n%s\n', df.head())
+
+    df['text'] = df['name'] + '<br>Population ' + (df['pop']/1e6).astype(str)+' million'
+    limits = [(0,2),(3,10),(11,20),(21,50),(50,3000)]
+    colors = ["royalblue","crimson","lightseagreen","orange","lightgrey"]
+    cities = []
+    scale = 5000
+
+    fig = go.Figure()
+
+    for i in range(len(limits)):
+        lim = limits[i]
+        df_sub = df[lim[0]:lim[1]]
+        fig.add_trace(go.Scattergeo(
+            locationmode = 'USA-states',
+            lon = df_sub['lon'],
+            lat = df_sub['lat'],
+            text = df_sub['text'],
+            marker = dict(
+                size = df_sub['pop']/scale,
+                color = colors[i],
+                line_color='rgb(40,40,40)',
+                line_width=0.5,
+                sizemode = 'area'
+            ),
+            name = '{0} - {1}'.format(lim[0],lim[1])))
+
+    fig.update_layout(
+            title_text = '2014 US city populations<br>(Click legend to toggle traces)',
+            showlegend = True,
+            geo = dict(
+                scope = 'usa',
+                landcolor = 'rgb(217, 217, 217)',
+            )
+        )
+
+    return fig
