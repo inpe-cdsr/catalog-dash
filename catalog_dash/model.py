@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from pandas import read_sql, to_datetime
-
 import pymysql
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError

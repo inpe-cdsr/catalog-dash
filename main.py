@@ -2,6 +2,7 @@
 
 from datetime import datetime as dt
 from re import split
+from pandas import read_csv, to_datetime
 
 from dash import Dash
 from dash_core_components import Graph, DatePickerRange
@@ -17,17 +18,26 @@ from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
 from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string
 
+
+# flask server
 server = Flask(__name__)
 
 @server.route('/')
 def index():
     return redirect('/catalog-dash/')
 
-app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, url_base_pathname='/catalog-dash/')
-app.css.append_css({"external_url": ["./assets/common.css"]})
 
+# dash application
+app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, url_base_pathname='/catalog-dash/')
+
+
+# database connection
 db = DatabaseConnection()
 df = db.select_from_graph_amount_scenes_by_dataset_and_date()
+
+# get the data from a CSV file
+# df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
+# df['date'] = to_datetime(df['date'])
 
 
 logging.info('main.py - df.head(): \n%s\n', df.head())
@@ -76,7 +86,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     Graph(id='graph-time-series-amount-of-scenes'),
 
     # graph-bubble-map-amount-of-scenes
-    # Graph(id='graph-bubble-map-amount-of-scenes')
+    Graph(id='graph-bubble-map-amount-of-scenes')
 ])
 
 
@@ -102,9 +112,8 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    Output('graph-time-series-amount-of-scenes', 'figure'),
-    # [Output('graph-time-series-amount-of-scenes', 'figure'),
-    # Output('graph-bubble-map-amount-of-scenes', 'figure')],
+    [Output('graph-time-series-amount-of-scenes', 'figure'),
+    Output('graph-bubble-map-amount-of-scenes', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -128,9 +137,8 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range)
-    # return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range), \
-    #        get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=xaxis_range)
+    return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range), \
+           get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=xaxis_range)
 
 
 if __name__ == '__main__':

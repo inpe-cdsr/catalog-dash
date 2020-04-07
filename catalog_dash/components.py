@@ -2,11 +2,17 @@
 
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 import plotly.express as px
 
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.utils import colors, get_text
+
+# display a larger df on the console
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 
 def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
@@ -76,47 +82,35 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
 def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
-    import plotly.graph_objects as go
-
-    import pandas as pd
-
-    df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_us_cities.csv')
-    df.head()
-
     logging.info('get_figure_of_graph_amount_of_scenes() - df.head(): \n%s\n', df.head())
 
-    df['text'] = df['name'] + '<br>Population ' + (df['pop']/1e6).astype(str)+' million'
-    limits = [(0,2),(3,10),(11,20),(21,50),(50,3000)]
-    colors = ["royalblue","crimson","lightseagreen","orange","lightgrey"]
-    cities = []
-    scale = 5000
+    df_copy = df.copy()
 
-    fig = go.Figure()
+    df_copy['year'] = df_copy['date'].map(lambda date: date.year)
 
-    for i in range(len(limits)):
-        lim = limits[i]
-        df_sub = df[lim[0]:lim[1]]
-        fig.add_trace(go.Scattergeo(
-            locationmode = 'USA-states',
-            lon = df_sub['lon'],
-            lat = df_sub['lat'],
-            text = df_sub['text'],
-            marker = dict(
-                size = df_sub['pop']/scale,
-                color = colors[i],
-                line_color='rgb(40,40,40)',
-                line_width=0.5,
-                sizemode = 'area'
-            ),
-            name = '{0} - {1}'.format(lim[0],lim[1])))
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head(50))
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
+    # logging.info('get_figure_of_graph_amount_of_scenes() - dataset.unique: \n%s\n', df_copy.dataset.unique())
 
-    fig.update_layout(
-            title_text = '2014 US city populations<br>(Click legend to toggle traces)',
-            showlegend = True,
-            geo = dict(
-                scope = 'usa',
-                landcolor = 'rgb(217, 217, 217)',
-            )
-        )
+    df_copy = df_copy.sort_values(by=['year'], ascending=False)
+
+    df_copy['year'] = df_copy['year'].astype('category')
+
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
+    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
+    # logging.info('get_figure_of_graph_amount_of_scenes() - dataset.unique: \n%s\n', df_copy.dataset.unique())
+
+    fig = px.scatter_geo(
+        df_copy,
+        title='abc',
+        lon=df['longitude'],
+        lat=df['latitude'],
+        color="dataset",
+        size='amount',
+        animation_frame='year',
+        projection='natural earth'
+    )
 
     return fig
