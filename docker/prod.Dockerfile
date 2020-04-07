@@ -17,6 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 ENV TZ=America/Sao_Paulo
 
-# EXPOSE 8050
+EXPOSE 8050
 
 CMD [ "python", "main.py" ]
