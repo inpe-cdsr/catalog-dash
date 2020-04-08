@@ -82,29 +82,29 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
 def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
-    logging.info('get_figure_of_graph_amount_of_scenes() - df.head(): \n%s\n', df.head())
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - original df.head(): \n%s\n', df.head())
 
     df_copy = df.copy()
 
+    # create a `year` column in order to generate the animation frame
     df_copy['year'] = df_copy['date'].map(lambda date: date.year)
-
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head(50))
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
-    # logging.info('get_figure_of_graph_amount_of_scenes() - dataset.unique: \n%s\n', df_copy.dataset.unique())
-
-    df_copy = df_copy.sort_values(by=['year'], ascending=False)
-
     df_copy['year'] = df_copy['year'].astype('category')
 
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
-    logging.info('get_figure_of_graph_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
-    # logging.info('get_figure_of_graph_amount_of_scenes() - dataset.unique: \n%s\n', df_copy.dataset.unique())
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy with `year`')
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - amount of datasets %s\n', len(df_copy.dataset.unique()))
 
-    fig = px.scatter_geo(
+    # sort by date and dataset
+    df_copy = df_copy.sort_values(by=['date', 'dataset'], ascending=True)
+
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
+    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+
+    return px.scatter_geo(
         df_copy,
-        title='abc',
+        title='Amount of Scenes by Dataset',
         lon=df['longitude'],
         lat=df['latitude'],
         color="dataset",
@@ -112,5 +112,3 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
         animation_frame='year',
         projection='natural earth'
     )
-
-    return fig
