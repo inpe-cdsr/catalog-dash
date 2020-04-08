@@ -32,12 +32,12 @@ app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, u
 
 
 # database connection
-db = DatabaseConnection()
-df = db.select_from_graph_amount_scenes_by_dataset_and_date()
+# db = DatabaseConnection()
+# df = db.select_from_graph_amount_scenes_by_dataset_and_date()
 
 # get the data from a CSV file
-# df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
-# df['date'] = to_datetime(df['date'])
+df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
+df['date'] = to_datetime(df['date'])
 
 
 logging.info('main.py - df.head(): \n%s\n', df.head())
