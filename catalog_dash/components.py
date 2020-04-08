@@ -79,7 +79,8 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     }
 
 
-def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None, is_scatter_mapbox=True):
+def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
+                                                    is_scatter_mapbox=True, sort_ascending=True):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - original df.head(): \n%s\n', df.head())
@@ -100,7 +101,7 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - amount of datasets %s\n', len(df_copy.dataset.unique()))
 
     # sort by date and dataset
-    df_copy = df_copy.sort_values(by=['date', 'dataset'], ascending=True)
+    df_copy = df_copy.sort_values(by=['date', 'dataset'], ascending=sort_ascending)
 
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
