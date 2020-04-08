@@ -7,7 +7,7 @@ from pandas import read_csv, to_datetime
 from dash import Dash
 from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
-from dash_html_components import Div, H1, H3
+from dash_html_components import Div, H1, H3, H4
 from flask import Flask, redirect
 
 from catalog_dash.components import get_figure_of_graph_time_series_amount_of_scenes, \
@@ -62,6 +62,14 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         }
     ),
 
+    H4(
+        children='Amount of Datasets: {}'.format(len(df.dataset.unique())),
+        style={
+            'textAlign': 'left',
+            'color': colors['text']
+        }
+    ),
+
     # date picker range
     Div([
         # Source: https://dash.plotly.com/dash-core-components/datepickerrange
@@ -86,7 +94,10 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     Graph(id='graph-time-series-amount-of-scenes'),
 
     # graph-bubble-map-amount-of-scenes
-    Graph(id='graph-bubble-map-amount-of-scenes')
+    Graph(id='graph-bubble-map-amount-of-scenes'),
+
+    # graph-bubble-map-amount-of-scenes--with-animation-frame
+    Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame')
 ])
 
 
@@ -113,7 +124,8 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 @app.callback(
     [Output('graph-time-series-amount-of-scenes', 'figure'),
-    Output('graph-bubble-map-amount-of-scenes', 'figure')],
+    Output('graph-bubble-map-amount-of-scenes', 'figure'),
+    Output('graph-bubble-map-amount-of-scenes--with-animation-frame', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -138,8 +150,14 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
     return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range), \
-           get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=xaxis_range)
-
+           get_figure_of_graph_bubble_map_amount_of_scenes(df,
+                                                           xaxis_range=xaxis_range,
+                                                           title='Amount of Scenes by Dataset with all Datasets'), \
+           get_figure_of_graph_bubble_map_amount_of_scenes(df,
+                                                           xaxis_range=xaxis_range,
+                                                           title='Amount of Scenes by Dataset with animation frame',
+                                                           animation_frame='year',
+                                                           is_scatter_mapbox=False)
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG_MODE, host=SERVER_HOST, port=SERVER_PORT)

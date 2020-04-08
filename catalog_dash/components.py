@@ -79,7 +79,7 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     }
 
 
-def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
+def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None, is_scatter_mapbox=True):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - original df.head(): \n%s\n', df.head())
@@ -89,6 +89,9 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
     # create a `year` column in order to generate the animation frame
     df_copy['year'] = df_copy['date'].map(lambda date: date.year)
     df_copy['year'] = df_copy['year'].astype('category')
+
+    # convert `date` to `str` in order to show it on the map
+    df_copy['date'] = df_copy['date'].dt.strftime('%Y-%m-%d')
 
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy with `year`')
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
@@ -102,13 +105,44 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
 
-    return px.scatter_geo(
-        df_copy,
-        title='Amount of Scenes by Dataset',
-        lon=df['longitude'],
-        lat=df['latitude'],
-        color="dataset",
-        size='amount',
-        animation_frame='year',
-        projection='natural earth'
-    )
+    # choose the map type based on the passed flag
+    if is_scatter_mapbox:
+        # create a figure using `px.scatter_mapbox`
+        fig = px.scatter_mapbox(
+            df_copy,
+            title=title,
+            lat='latitude',
+            lon='longitude',
+            color='dataset',
+            size='amount',
+            hover_data=['date'],
+            animation_frame=animation_frame,
+            zoom=2,
+            height=700
+        )
+
+        # add as base map the OSM
+        fig.update_layout(
+            mapbox_style='open-street-map',
+            margin={'t': 40, 'r': 5, 'b': 5, 'l': 5}
+        )
+
+    else:
+        # create a figure using `px.scatter_geo`
+        fig = px.scatter_geo(
+            df_copy,
+            title=title,
+            lon='longitude',
+            lat='latitude',
+            color='dataset',
+            size='amount',
+            hover_data=['date'],
+            animation_frame=animation_frame,
+            projection='natural earth'
+        )
+
+        # update the height and and a flag to show the countries
+        fig.update_layout(height=700)
+        fig.update_geos(showcountries=True)
+
+    return fig
