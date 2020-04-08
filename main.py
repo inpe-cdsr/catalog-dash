@@ -94,8 +94,8 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     # graph-time-series-amount-of-scenes
     Graph(id='graph-time-series-amount-of-scenes'),
 
-    # # graph-bubble-map-amount-of-scenes
-    Graph(id='graph-bubble-map-amount-of-scenes'),
+    # graph-bubble-map-amount-of-scenes
+    # Graph(id='graph-bubble-map-amount-of-scenes'),
 
     # graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true
     Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true'),
@@ -128,7 +128,7 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 @app.callback(
     [Output('graph-time-series-amount-of-scenes', 'figure'),
-    Output('graph-bubble-map-amount-of-scenes', 'figure'),
+    # Output('graph-bubble-map-amount-of-scenes', 'figure'),
     Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true', 'figure'),
     Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false', 'figure')],
     [Input('date-picker-range', 'start_date'),
@@ -154,22 +154,28 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    return get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range), \
-           get_figure_of_graph_bubble_map_amount_of_scenes(df,
-                                                           xaxis_range=xaxis_range,
-                                                           title='Amount of Scenes by Dataset with all Datasets'), \
-           get_figure_of_graph_bubble_map_amount_of_scenes(df,
-                                                           xaxis_range=xaxis_range,
-                                                           title='Amount of Scenes by Dataset with animation frame',
-                                                           animation_frame='year',
-                                                           is_scatter_mapbox=False,
-                                                           sort_ascending=True), \
-            get_figure_of_graph_bubble_map_amount_of_scenes(df,
-                                                           xaxis_range=xaxis_range,
-                                                           title='Amount of Scenes by Dataset with animation frame',
-                                                           animation_frame='year',
-                                                           is_scatter_mapbox=False,
-                                                           sort_ascending=False)
+    figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=xaxis_range)
+
+    # figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
+    #                                                             xaxis_range=xaxis_range,
+    #                                                             title='Amount of Scenes by Dataset with all Datasets')
+
+    figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
+                                                                xaxis_range=xaxis_range,
+                                                                title='Amount of Scenes by Dataset with animation frame (sort_ascending=True)',
+                                                                animation_frame='year',
+                                                                is_scatter_mapbox=False,
+                                                                sort_ascending=True)
+
+    figure_04 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
+                                                                xaxis_range=xaxis_range,
+                                                                title='Amount of Scenes by Dataset with animation frame (sort_ascending=False)',
+                                                                animation_frame='year',
+                                                                is_scatter_mapbox=False,
+                                                                sort_ascending=False)
+
+    # return figure_01, figure_02, figure_03, figure_04
+    return figure_01, figure_03, figure_04
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG_MODE, host=SERVER_HOST, port=SERVER_PORT)

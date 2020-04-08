@@ -143,7 +143,8 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
         )
 
         # update the height and and a flag to show the countries
-        fig.update_layout(height=700)
+        # fig.update_layout(height=700)
+        fig.update_layout(height=500)
         fig.update_geos(showcountries=True)
 
     return fig
