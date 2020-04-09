@@ -102,6 +102,8 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
                                                     is_scatter_mapbox=True, sort_ascending=True):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
+    figure_height = 800
+
     df_copy = df.copy()
 
     # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
@@ -140,7 +142,7 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             hover_data=['date'],
             animation_frame=animation_frame,
             zoom=2,
-            height=700
+            height=figure_height
         )
 
         # add as base map the OSM
@@ -160,12 +162,11 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             size='amount',
             hover_data=['date'],
             animation_frame=animation_frame,
-            projection='natural earth'
+            projection='natural earth',
+            height=figure_height
         )
 
         # update the height and and a flag to show the countries
-        # fig.update_layout(height=700)
-        fig.update_layout(height=500)
         fig.update_geos(showcountries=True)
 
     return fig
