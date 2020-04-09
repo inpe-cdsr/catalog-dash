@@ -3,11 +3,17 @@
 from os import environ
 from logging import DEBUG, INFO
 
+from catalog_dash.utils import str2bool
+
 
 os_environ_get = environ.get
 
 
-DEBUG_MODE = bool(os_environ_get('DEBUG_MODE', 'True'))
+# True: the application will get the data from the database
+# False: the application will get the data from a CSV file
+IS_TO_USE_DATA_FROM_DB = str2bool(os_environ_get('IS_TO_USE_DATA_FROM_DB', 'False'))
+
+DEBUG_MODE = str2bool(os_environ_get('DEBUG_MODE', 'True'))
 
 SERVER_HOST = os_environ_get('SERVER_HOST', '0.0.0.0')
 SERVER_PORT = int(os_environ_get('SERVER_PORT', 8050))

@@ -12,11 +12,17 @@ from flask import Flask, redirect
 
 from catalog_dash.components import get_figure_of_graph_time_series_amount_of_scenes, \
                                     get_figure_of_graph_bubble_map_amount_of_scenes
-from catalog_dash.environment import DEBUG_MODE, SERVER_HOST, SERVER_PORT
+from catalog_dash.environment import IS_TO_USE_DATA_FROM_DB, DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
 from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string
+
+
+logging.info('main.py - IS_TO_USE_DATA_FROM_DB: %s', IS_TO_USE_DATA_FROM_DB)
+logging.info('main.py - DEBUG_MODE: %s', DEBUG_MODE)
+logging.info('main.py - SERVER_HOST: %s', SERVER_HOST)
+logging.info('main.py - SERVER_PORT: %s\n', SERVER_PORT)
 
 
 # flask server
@@ -31,13 +37,14 @@ def index():
 app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, url_base_pathname='/catalog-dash/')
 
 
-# database connection
-# db = DatabaseConnection()
-# df = db.select_from_graph_amount_scenes_by_dataset_and_date()
-
-# get the data from a CSV file
-df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
-df['date'] = to_datetime(df['date'])
+if IS_TO_USE_DATA_FROM_DB:
+    # database connection
+    db = DatabaseConnection()
+    df = db.select_from_graph_amount_scenes_by_dataset_and_date()
+else:
+    # get the data from a CSV file
+    df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
+    df['date'] = to_datetime(df['date'])
 
 
 logging.info('main.py - df.head(): \n%s\n', df.head())
@@ -176,6 +183,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     # return figure_01, figure_02, figure_03, figure_04
     return figure_01, figure_03, figure_04
+
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG_MODE, host=SERVER_HOST, port=SERVER_PORT)

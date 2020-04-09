@@ -42,7 +42,7 @@ Run the application:
 
 ```
 $ pyenv activate catalog-dash
-$ set -a && source dash.env && set +a
+$ set -a && source catalog_dash.env && set +a
 $ python main.py
 ```
 
