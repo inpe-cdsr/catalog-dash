@@ -15,6 +15,25 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 
+def extra_logging(df):
+    logging.info('extra_logging()\n')
+
+    logging.info('extra_logging() - amount of datasets in df %s\n', len(df.dataset.unique()))
+
+    years = df.year.unique()
+
+    logging.info('extra_logging() - available years: %s\n', years)
+
+    # show the information of the df according to each year
+    for year in years:
+        df_20xx = df[df['year'] == year]
+
+        # logging.info('extra_logging() - df_%s.head(): \n%s\n', year, df_20xx.head())
+        logging.info('extra_logging() - df_%s.shape: %s', year, df_20xx.shape)
+        logging.info('extra_logging() - amount of datasets in df_%s: %s', year, len(df_20xx.dataset.unique()))
+        logging.info('extra_logging() - datasets in df_%s: %s\n', year, df_20xx.dataset.unique())
+
+
 def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_amount_of_scenes()\n')
 
@@ -83,9 +102,10 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
                                                     is_scatter_mapbox=True, sort_ascending=True):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - original df.head(): \n%s\n', df.head())
-
     df_copy = df.copy()
+
+    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
 
     # create a `year` column in order to generate the animation frame
     df_copy['year'] = df_copy['date'].map(lambda date: date.year)
@@ -96,15 +116,16 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
 
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy with `year`')
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - amount of datasets %s\n', len(df_copy.dataset.unique()))
+
+    extra_logging(df_copy)
 
     # sort by date and dataset
     df_copy = df_copy.sort_values(by=['date', 'dataset'], ascending=sort_ascending)
 
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
+    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
 
     # choose the map type based on the passed flag
     if is_scatter_mapbox:
