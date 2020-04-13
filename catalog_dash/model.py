@@ -92,3 +92,11 @@ class DatabaseConnection():
         df['date'] = to_datetime(df['date'])
 
         return df
+
+    def select_from_scene_dataset(self):
+        df = self.execute('SELECT * FROM `scene_dataset`;')
+
+        # convert date, from `str` to a `datetime`
+        df['date'] = to_datetime(df['date'])
+
+        return df

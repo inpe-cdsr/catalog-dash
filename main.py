@@ -40,16 +40,20 @@ app = Dash(__name__, server=server, external_stylesheets=external_stylesheets, u
 if IS_TO_USE_DATA_FROM_DB:
     # database connection
     db = DatabaseConnection()
-    df = db.select_from_graph_amount_scenes_by_dataset_and_date()
+    # df = db.select_from_graph_amount_scenes_by_dataset_and_date()
+    df = db.select_from_scene_dataset()
+    # df.to_csv('data/scene_dataset.csv', index=False)
 else:
     # get the data from a CSV file
-    df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
+    # df = read_csv('data/graph_amount_scenes_by_dataset_and_date.csv')
+    df = read_csv('data/scene_dataset.csv')
     df['date'] = to_datetime(df['date'])
 
 
 logging.info('main.py - df.head(): \n%s\n', df.head())
 logging.info('main.py - df.shape: %s\n', df.shape)
 logging.info('main.py - df.dtypes: \n%s\n', df.dtypes)
+logging.info('main.py - type(df): %s\n', type(df))
 
 # get the min start date and the max end date to the graph
 min_start_date = df['date'].min()  # min_start_date: 2016-05-01 00:00:00
@@ -105,10 +109,10 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     # Graph(id='graph-bubble-map-amount-of-scenes'),
 
     # graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true
-    Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true'),
+    # Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true'),
 
     # graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false
-    Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false')
+    # Graph(id='graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false')
 ])
 
 
@@ -134,10 +138,11 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    [Output('graph-time-series-amount-of-scenes', 'figure'),
-    # Output('graph-bubble-map-amount-of-scenes', 'figure'),
-    Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true', 'figure'),
-    Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false', 'figure')],
+    Output('graph-time-series-amount-of-scenes', 'figure'),
+    # [Output('graph-time-series-amount-of-scenes', 'figure'),
+    # # Output('graph-bubble-map-amount-of-scenes', 'figure'),
+    # Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-true', 'figure'),
+    # Output('graph-bubble-map-amount-of-scenes--with-animation-frame-and_ascending-false', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -167,22 +172,23 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
     #                                                             xaxis_range=xaxis_range,
     #                                                             title='Amount of Scenes by Dataset with all Datasets')
 
-    figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
-                                                                xaxis_range=xaxis_range,
-                                                                title='Amount of Scenes by Dataset with animation frame (sort_ascending=True)',
-                                                                animation_frame='year',
-                                                                is_scatter_mapbox=False,
-                                                                sort_ascending=True)
+    # figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
+    #                                                             xaxis_range=xaxis_range,
+    #                                                             title='Amount of Scenes by Dataset with animation frame (sort_ascending=True)',
+    #                                                             animation_frame='year',
+    #                                                             is_scatter_mapbox=False,
+    #                                                             sort_ascending=True)
 
-    figure_04 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
-                                                                xaxis_range=xaxis_range,
-                                                                title='Amount of Scenes by Dataset with animation frame (sort_ascending=False)',
-                                                                animation_frame='year',
-                                                                is_scatter_mapbox=False,
-                                                                sort_ascending=False)
+    # figure_04 = get_figure_of_graph_bubble_map_amount_of_scenes(df,
+    #                                                             xaxis_range=xaxis_range,
+    #                                                             title='Amount of Scenes by Dataset with animation frame (sort_ascending=False)',
+    #                                                             animation_frame='year',
+    #                                                             is_scatter_mapbox=False,
+    #                                                             sort_ascending=False)
 
     # return figure_01, figure_02, figure_03, figure_04
-    return figure_01, figure_03, figure_04
+    # return figure_01, figure_03, figure_04
+    return figure_01
 
 
 if __name__ == '__main__':

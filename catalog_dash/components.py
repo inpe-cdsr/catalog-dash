@@ -20,6 +20,7 @@ def extra_logging(df):
 
     logging.info('extra_logging() - amount of datasets in df %s\n', len(df.dataset.unique()))
 
+    # get a list with the available years (e.g. [2016, 2017, 2018, 2019, 2020])
     years = df.year.unique()
 
     logging.info('extra_logging() - available years: %s\n', years)
@@ -37,6 +38,8 @@ def extra_logging(df):
 def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_amount_of_scenes()\n')
 
+    logging.info('get_figure_of_graph_amount_of_scenes() - original df.head(): \n%s\n', df.head())
+
     logical_date_range = None
 
     # create the object `layout.xaxis`
@@ -44,6 +47,10 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
         'title': 'Date',
         # 'range': ['2018-03-01', '2019-03-03']  # where the `range` key should be
     }
+
+    grouped_df = df.groupby(['dataset', 'date'], as_index=False).size().to_frame('amount').reset_index().sort_values(['date', 'dataset'])
+
+    logging.info('get_figure_of_graph_amount_of_scenes() - grouped grouped_df.head(): \n%s\n', grouped_df.head())
 
     # if there are values, then do operations with the data, convert it and add it to the figure
     if xaxis_range:
@@ -54,7 +61,7 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
         end_date = dt.strptime(xaxis_range[1], '%Y-%m-%d')
 
         # extract the data from the original selected range
-        logical_date_range = ((df['date'] >= start_date) & (df['date'] <= end_date))
+        logical_date_range = ((grouped_df['date'] >= start_date) & (grouped_df['date'] <= end_date))
 
         # substract and add months in order to make the graph look better
         start_date -= relativedelta(months=6)
@@ -74,9 +81,9 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     return {
         'data': [
             {
-                'x': df[(df['dataset'] == dataset) & (logical_date_range)]['date'],
-                'y': df[(df['dataset'] == dataset) & (logical_date_range)]['amount'],
-                'text': get_text(df[(df['dataset'] == dataset) & (logical_date_range)]),
+                'x': grouped_df[(grouped_df['dataset'] == dataset) & (logical_date_range)]['date'],
+                'y': grouped_df[(grouped_df['dataset'] == dataset) & (logical_date_range)]['amount'],
+                'text': get_text(grouped_df[(grouped_df['dataset'] == dataset) & (logical_date_range)]),
                 'mode': 'lines+markers',
                 'opacity': 0.7,
                 'marker': {'size': 7},
@@ -84,9 +91,10 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
             } for dataset in df.dataset.unique()
         ],
         'layout': {
+            'title': 'Time series',
             'xaxis': xaxis,
             'yaxis': {'title': 'Amount of scenes'},
-            'margin': {'l': 40, 'b': 40, 't': 10, 'r': 10},
+            'margin': {'l': 40, 'b': 40, 't': 30, 'r': 10},
             'legend': {'x': 0, 'y': 1},
             'hovermode': 'closest',
             'plot_bgcolor': colors['background'],
@@ -166,7 +174,7 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             height=figure_height
         )
 
-        # update the height and and a flag to show the countries
+        # update the flag
         fig.update_geos(showcountries=True)
 
     return fig
