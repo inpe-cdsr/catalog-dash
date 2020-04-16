@@ -85,18 +85,17 @@ class DatabaseConnection():
         finally:
             self.close()
 
-    def select_from_graph_amount_scenes_by_dataset_and_date(self):
-        df = self.execute('SELECT * FROM `graph_amount_scenes_by_dataset_and_date`;')
+    def select_from_scene_dataset(self):
+        df = self.execute('SELECT * FROM `scene_dataset`;')
 
         # convert date, from `str` to a `datetime`
         df['date'] = to_datetime(df['date'])
 
         return df
 
-    def select_from_scene_dataset(self):
-        df = self.execute('SELECT * FROM `scene_dataset`;')
+    def select_from_dash_amount_scenes_by_dataset_year_month_lon_lat(self):
+        df = self.execute('SELECT * FROM `dash_amount_scenes_by_dataset_year_month_lon_lat`;')
 
-        # convert date, from `str` to a `datetime`
-        df['date'] = to_datetime(df['date'])
+        df.rename(columns={'_year_month': 'year_month'}, inplace=True)
 
         return df
