@@ -7,14 +7,14 @@ import plotly.express as px
 
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
-from catalog_dash.utils import colors, get_text
+from catalog_dash.utils import colors
 
 # display a larger df on the console
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-
+'''
 def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     logging.info('get_figure_of_graph_time_series_amount_of_scenes()\n')
 
@@ -95,7 +95,7 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
             }
         }
     }
-
+'''
 
 def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
                                                     is_scatter_geo=True, sort_ascending=True):

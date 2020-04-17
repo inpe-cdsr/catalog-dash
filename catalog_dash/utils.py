@@ -19,14 +19,14 @@ def str2bool(value):
     # Source: https://stackoverflow.com/a/715468
     return str(value).lower() in ('true', 't', '1', 'yes', 'y')
 
-
+'''
 def get_text(df):
     return 'Amount of Scenes: ' + df['amount'].map(str) + '<br>' + \
             'Dataset: ' + df['dataset'].map(str) + '<br>' + \
             'Year-Month: ' + df['year_month'].map(str) + '<br>' + \
             'Longitude: ' + df['longitude'].map(str) + '<br>' + \
             'Latitude: ' + df['latitude'].map(str)
-
+'''
 
 def get_formatted_date_as_string(date_string, output_format='%d/%m/%Y'):
     # get the date as datetime

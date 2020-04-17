@@ -8,10 +8,10 @@ from dash import Dash
 from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
 from dash_html_components import Div, H1, H3, H4
+from dash_table import DataTable
 from flask import Flask, redirect
 
-from catalog_dash.components import get_figure_of_graph_time_series_amount_of_scenes, \
-                                    get_figure_of_graph_bubble_map_amount_of_scenes
+from catalog_dash.components import get_figure_of_graph_bubble_map_amount_of_scenes
 from catalog_dash.environment import IS_TO_USE_DATA_FROM_DB, DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
@@ -87,6 +87,51 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         }
     ),
 
+    # table--amount-of-scenes
+    Div([
+        DataTable(
+            id='table--amount-of-scenes',
+            columns=[{"name": i, "id": i} for i in df_amount_of_scenes.columns],
+            data=df_amount_of_scenes.to_dict('records'),
+            style_as_list_view=True,
+            fixed_rows={ 'headers': True, 'data': 0 },
+            style_table={
+                'maxHeight': '300px',
+                'maxWidth': '1000px',
+                'overflowY': 'scroll'
+            },
+            style_data_conditional=[
+                {
+                    'if': {'row_index': 'odd'},
+                    'backgroundColor': 'rgb(130, 130, 130)'
+                }
+            ],
+            style_filter={
+                'backgroundColor': 'white'
+            },
+            style_header={
+                'backgroundColor': 'rgb(30, 30, 30)',
+                'fontWeight': 'bold'
+            },
+            style_cell_conditional=[
+                {
+                    'if': {'column_id': 'year_month'},
+                    'textAlign': 'center'
+                }
+            ],
+            style_cell={
+                'textAlign': 'left',
+                'minWidth': '100px',
+                'backgroundColor': 'rgb(50, 50, 50)',
+                'color': 'white'
+            },
+            sort_action='native',
+            sort_mode='multi',
+            filter_action='native',
+            page_size=50,
+        ),
+    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+
     # amount of datasets
     H4(
         children='Amount of Datasets: {}'.format(amount_of_datasets),
@@ -117,7 +162,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     ),
 
     # graph--time-series--amount-of-scenes
-    Graph(id='graph--time-series--amount-of-scenes'),
+    # Graph(id='graph--time-series--amount-of-scenes'),
 
     # graph--bubble-map--amount-of-scenes-by-dataset
     Graph(id='graph--bubble-map--amount-of-scenes-by-dataset')
@@ -146,8 +191,7 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    [Output('graph--time-series--amount-of-scenes', 'figure'),
-    Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure')],
+    Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure'),
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -171,7 +215,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_amount_of_scenes, xaxis_range=xaxis_range)
+    # figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_amount_of_scenes, xaxis_range=xaxis_range)
 
     figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_amount_of_scenes,
                                                                 xaxis_range=xaxis_range,
@@ -180,7 +224,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
                                                                 is_scatter_geo=True,
                                                                 sort_ascending=True)
 
-    return figure_01, figure_02
+    return figure_02
 
 
 if __name__ == '__main__':
