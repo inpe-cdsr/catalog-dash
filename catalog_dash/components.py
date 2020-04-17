@@ -86,7 +86,7 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     }
 
 
-def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None,
+def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
                                                     is_scatter_geo=True, sort_ascending=True):
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
 
@@ -112,8 +112,8 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             lat='latitude',
             color='dataset',
             size='amount',
-            # hover_data=['year_month'],
-            animation_frame='year_month',
+            hover_data=['year_month'],
+            animation_frame=animation_frame,
             projection='natural earth',
             height=figure_height
         )
@@ -129,8 +129,8 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             lat='latitude',
             color='dataset',
             size='amount',
-            # hover_data=['year_month'],
-            animation_frame='year_month',
+            hover_data=['year_month'],
+            animation_frame=animation_frame,
             zoom=2,
             height=figure_height
         )

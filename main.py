@@ -177,6 +177,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
     figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_amount_of_scenes,
                                                                 xaxis_range=xaxis_range,
                                                                 title='Amount of Scenes by Dataset in a specific location (long/lat)',
+                                                                animation_frame='year_month',
                                                                 is_scatter_geo=True,
                                                                 sort_ascending=True)
 
