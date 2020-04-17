@@ -21,15 +21,11 @@ def str2bool(value):
 
 
 def get_text(df):
-    # logging.debug('get_text() - df.head(): \n%s\n', df.head())
-
-    concat_df = 'Amount of Scenes: ' + df['amount'].map(str) + '<br>' + \
-                'Date: ' + df['date'].map(str) + '<br>' + \
-                'Dataset: ' + df['dataset'].map(str)
-
-    # logging.debug('get_text() - concat_df.head(): \n%s\n', concat_df.head())
-
-    return concat_df
+    return 'Amount of Scenes: ' + df['amount'].map(str) + '<br>' + \
+            'Dataset: ' + df['dataset'].map(str) + '<br>' + \
+            'Year-Month: ' + df['year_month'].map(str) + '<br>' + \
+            'Longitude: ' + df['longitude'].map(str) + '<br>' + \
+            'Latitude: ' + df['latitude'].map(str)
 
 
 def get_formatted_date_as_string(date_string, output_format='%d/%m/%Y'):

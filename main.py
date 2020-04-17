@@ -117,7 +117,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     ),
 
     # graph--time-series--amount-of-scenes
-    # Graph(id='graph--time-series--amount-of-scenes'),
+    Graph(id='graph--time-series--amount-of-scenes'),
 
     # graph--bubble-map--amount-of-scenes-by-dataset
     Graph(id='graph--bubble-map--amount-of-scenes-by-dataset')
@@ -146,9 +146,8 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    # [Output('graph--time-series--amount-of-scenes', 'figure'),
-    # Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure')],
-    Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure'),
+    [Output('graph--time-series--amount-of-scenes', 'figure'),
+    Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -172,7 +171,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    # figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_amount_of_scenes, xaxis_range=xaxis_range)
+    figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_amount_of_scenes, xaxis_range=xaxis_range)
 
     figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_amount_of_scenes,
                                                                 xaxis_range=xaxis_range,
@@ -181,7 +180,7 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
                                                                 is_scatter_geo=True,
                                                                 sort_ascending=True)
 
-    return figure_02
+    return figure_01, figure_02
 
 
 if __name__ == '__main__':

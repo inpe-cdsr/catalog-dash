@@ -16,9 +16,10 @@ pd.set_option('display.width', 1000)
 
 
 def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
-    logging.info('get_figure_of_graph_amount_of_scenes()\n')
+    logging.info('get_figure_of_graph_time_series_amount_of_scenes()\n')
 
-    logging.info('get_figure_of_graph_amount_of_scenes() - original df.head(): \n%s\n', df.head())
+    logging.info('get_figure_of_graph_time_series_amount_of_scenes() - df.head(): \n%s\n', df.head())
+    logging.info('get_figure_of_graph_time_series_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
     logical_date_range = None
 
@@ -28,20 +29,21 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
         # 'range': ['2018-03-01', '2019-03-03']  # where the `range` key should be
     }
 
-    # grouped_df = df.groupby(['dataset', 'date'], as_index=False).size().to_frame('amount').reset_index().sort_values(['date', 'dataset'])
-
-    logging.info('get_figure_of_graph_amount_of_scenes() - grouped df.head(): \n%s\n', df.head())
-
     # if there are values, then do operations with the data, convert it and add it to the figure
     if xaxis_range:
-        logging.info('get_figure_of_graph_amount_of_scenes() - inserted xaxis_range: %s\n', xaxis_range)
+        # [:-3] - extract the string without the last 3 chars, in other words, I get just the year and month
+        start_date = xaxis_range[0][:-3]
+        end_date = xaxis_range[1][:-3]
 
-        # convert [start|end]_date from `str` to `datetime` in order to
-        start_date = dt.strptime(xaxis_range[0], '%Y-%m-%d')
-        end_date = dt.strptime(xaxis_range[1], '%Y-%m-%d')
+        logging.info('get_figure_of_graph_time_series_amount_of_scenes() - start_date: %s', start_date)
+        logging.info('get_figure_of_graph_time_series_amount_of_scenes() - end_date: %s\n', end_date)
 
         # extract the data from the original selected range
-        logical_date_range = ((df['date'] >= start_date) & (df['date'] <= end_date))
+        logical_date_range = ((df['year_month'] >= start_date) & (df['year_month'] <= end_date))
+
+        # convert [start|end]_date from `str` to `datetime`
+        start_date = dt.strptime(xaxis_range[0], '%Y-%m-%d')
+        end_date = dt.strptime(xaxis_range[1], '%Y-%m-%d')
 
         # substract and add months in order to make the graph look better
         start_date -= relativedelta(months=6)
@@ -50,7 +52,7 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
         # convert the dates from `datetime` to `str` again in order to pass the xaxis range to build the figure
         xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]
 
-        logging.info('get_figure_of_graph_amount_of_scenes() - converted xaxis_range: %s\n', xaxis_range)
+        logging.info('get_figure_of_graph_time_series_amount_of_scenes() - converted xaxis_range: %s\n', xaxis_range)
 
         # add the `xaxis_range` to the figure
         xaxis['range'] = xaxis_range
@@ -58,18 +60,27 @@ def get_figure_of_graph_time_series_amount_of_scenes(df, xaxis_range=[]):
     else:
         raise CatalogDashException('Invalid `xaxis_range`, it is empty!')
 
-    return {
-        'data': [
+    # I'm going to build the `figure.data`
+    data = []
+
+    for dataset in df.dataset.unique():
+        # I get a sub df by dataset and the selected range, and I create the `line+marker` based on it
+        sub_df = df[(df['dataset'] == dataset) & (logical_date_range)]
+
+        data.append(
             {
-                'x': df[(df['dataset'] == dataset) & (logical_date_range)]['date'],
-                'y': df[(df['dataset'] == dataset) & (logical_date_range)]['amount'],
-                'text': get_text(df[(df['dataset'] == dataset) & (logical_date_range)]),
+                'x': sub_df['year_month'],
+                'y': sub_df['amount'],
+                'text': get_text(sub_df),
                 'mode': 'lines+markers',
                 'opacity': 0.7,
                 'marker': {'size': 7},
                 'name': dataset
-            } for dataset in df.dataset.unique()
-        ],
+            }
+        )
+
+    return {
+        'data': data,
         'layout': {
             'title': 'Time series',
             'xaxis': xaxis,
