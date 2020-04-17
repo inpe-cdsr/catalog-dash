@@ -7,7 +7,7 @@ from pandas import read_csv, to_datetime
 from dash import Dash
 from dash_core_components import Graph, DatePickerRange
 from dash.dependencies import Output, Input
-from dash_html_components import Div, H1, H3, H4
+from dash_html_components import Div, P, H1, H3, H4
 from dash_table import DataTable
 from flask import Flask, redirect
 
@@ -89,77 +89,100 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
 
     # table--amount-of-scenes
     Div([
-        DataTable(
-            id='table--amount-of-scenes',
-            columns=[{"name": i, "id": i} for i in df_amount_of_scenes.columns],
-            data=df_amount_of_scenes.to_dict('records'),
-            style_as_list_view=True,
-            fixed_rows={ 'headers': True, 'data': 0 },
-            style_table={
-                'maxHeight': '300px',
-                'maxWidth': '1000px',
-                'overflowY': 'scroll'
-            },
-            style_data_conditional=[
-                {
-                    'if': {'row_index': 'odd'},
-                    'backgroundColor': 'rgb(130, 130, 130)'
+        # left div - table
+        Div([
+            # title
+            P(
+                children='Table Amount of Scenes by Dataset, Year-Month and Longitude/Latitude',
+                style={
+                    'textAlign': 'center',
+                    'color': colors['text']
                 }
-            ],
-            style_filter={
-                'backgroundColor': 'white'
-            },
-            style_header={
-                'backgroundColor': 'rgb(30, 30, 30)',
-                'fontWeight': 'bold'
-            },
-            style_cell_conditional=[
-                {
-                    'if': {'column_id': 'year_month'},
-                    'textAlign': 'center'
+            ),
+            # table
+            DataTable(
+                id='table--amount-of-scenes',
+                columns=[{"name": i, "id": i} for i in df_amount_of_scenes.columns],
+                data=df_amount_of_scenes.to_dict('records'),
+                style_as_list_view=True,
+                fixed_rows={ 'headers': True, 'data': 0 },
+                style_table={
+                    'maxHeight': '300px',
+                    'maxWidth': '1000px',
+                    'overflowY': 'scroll'
+                },
+                style_data_conditional=[
+                    {
+                        'if': {'row_index': 'odd'},
+                        'backgroundColor': 'rgb(130, 130, 130)'
+                    }
+                ],
+                style_filter={
+                    'backgroundColor': 'white'
+                },
+                style_header={
+                    'backgroundColor': 'rgb(30, 30, 30)',
+                    'fontWeight': 'bold'
+                },
+                style_cell_conditional=[
+                    {
+                        'if': {'column_id': 'year_month'},
+                        'textAlign': 'center'
+                    }
+                ],
+                style_cell={
+                    'textAlign': 'left',
+                    'minWidth': '100px',
+                    'backgroundColor': 'rgb(50, 50, 50)',
+                    'color': 'white'
+                },
+                sort_action='native',
+                sort_mode='multi',
+                filter_action='native',
+                page_size=50,
+            ),
+        ], style={'width': '50%', 'padding': '10px'}),
+
+        # right div - information
+        Div([
+            # How many datasets are available?
+            P(
+                children='How many datasets are available? {}'.format(amount_of_datasets),
+                style={
+                    # 'textAlign': 'left',
+                    'color': colors['text']
                 }
-            ],
-            style_cell={
-                'textAlign': 'left',
-                'minWidth': '100px',
-                'backgroundColor': 'rgb(50, 50, 50)',
-                'color': 'white'
-            },
-            sort_action='native',
-            sort_mode='multi',
-            filter_action='native',
-            page_size=50,
-        ),
-    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+            ),
 
-    # amount of datasets
-    H4(
-        children='Amount of Datasets: {}'.format(amount_of_datasets),
-        style={
-            'textAlign': 'left',
-            'color': colors['text']
-        }
-    ),
+            # Select the start and end date to arrange the graphs
+            P(
+                children='Select the start and end date to arrange the graphs:',
+                style={
+                    # 'textAlign': 'left',
+                    'color': colors['text']
+                }
+            ),
 
-    # date picker range
-    Div([
-        # Source: https://dash.plotly.com/dash-core-components/datepickerrange
-        DatePickerRange(
-            id='date-picker-range',
-            display_format='DD/MM/YYYY',
-            min_date_allowed=min_start_date,
-            max_date_allowed=max_end_date,
-            start_date=min_start_date,
-            end_date=max_end_date
-        )
+            # date picker range
+            Div([
+                DatePickerRange(
+                    id='date-picker-range',
+                    display_format='DD/MM/YYYY',
+                    min_date_allowed=min_start_date,
+                    max_date_allowed=max_end_date,
+                    start_date=min_start_date,
+                    end_date=max_end_date
+                )
+            ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+            P(
+                id='output-container-date-picker-range',
+                style={
+                    'textAlign': 'center',
+                    'color': colors['text']
+                }
+            ),
+        ], style={'width': '50%', 'padding': '10px'}),
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-    H3(
-        id='output-container-date-picker-range',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
 
     # graph--time-series--amount-of-scenes
     # Graph(id='graph--time-series--amount-of-scenes'),

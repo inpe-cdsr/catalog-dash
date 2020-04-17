@@ -1,5 +1,6 @@
 body {
     background-color: #111111;
+    font-size: 20px;
 }
 
 /* change the DataTable pagination component styles */
@@ -9,7 +10,7 @@ body {
 
 .dash-table-container .previous-next-container input.current-page {
     width: 50px !important;
-    padding: 0px;
+    font-size: 15px !important;
 }
 
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
