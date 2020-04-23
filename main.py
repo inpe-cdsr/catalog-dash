@@ -16,6 +16,7 @@ from catalog_dash.environment import IS_TO_USE_DATA_FROM_DB, DEBUG_MODE, SERVER_
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
+from catalog_dash.services import get_df_scene_dataset_grouped_by
 from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string, extra_logging
 
 
@@ -55,16 +56,16 @@ else:
 
 
 logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head())
-logging.info('main.py - df_scene_dataset.shape: %s\n', df_scene_dataset.shape)
-logging.info('main.py - df_scene_dataset.dtypes: \n%s\n', df_scene_dataset.dtypes)
-logging.info('main.py - type(df_scene_dataset): %s\n', type(df_scene_dataset))
+# logging.info('main.py - df_scene_dataset.shape: %s\n', df_scene_dataset.shape)
+# logging.info('main.py - df_scene_dataset.dtypes: \n%s\n', df_scene_dataset.dtypes)
+# logging.info('main.py - type(df_scene_dataset): %s\n', type(df_scene_dataset))
 
-extra_logging(df_scene_dataset)
+# extra_logging(df_scene_dataset)
 
 logging.info('main.py - df_amount_of_scenes.head(): \n%s\n', df_amount_of_scenes.head())
-logging.info('main.py - df_amount_of_scenes.shape: %s\n', df_amount_of_scenes.shape)
-logging.info('main.py - df_amount_of_scenes.dtypes: \n%s\n', df_amount_of_scenes.dtypes)
-logging.info('main.py - type(df_amount_of_scenes): %s\n', type(df_amount_of_scenes))
+# logging.info('main.py - df_amount_of_scenes.shape: %s\n', df_amount_of_scenes.shape)
+# logging.info('main.py - df_amount_of_scenes.dtypes: \n%s\n', df_amount_of_scenes.dtypes)
+# logging.info('main.py - type(df_amount_of_scenes): %s\n', type(df_amount_of_scenes))
 
 
 # get the values
@@ -75,6 +76,12 @@ max_end_date = df_scene_dataset['date'].max()  # max_end_date: 2020-03-03 00:00:
 logging.info('main.py - amount_of_datasets: %s', amount_of_datasets)
 logging.info('main.py - min_start_date: %s', min_start_date)
 logging.info('main.py - max_end_date: %s', max_end_date)
+
+
+# I group my df by 'dataset' and 'year_month' to build the table
+df_sd_dataset_year_month = get_df_scene_dataset_grouped_by(df_scene_dataset, groupby=['dataset', 'year_month'])
+
+logging.info('main.py - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
 
 
 app.layout = Div(style={'backgroundColor': colors['background']}, children=[
@@ -102,8 +109,8 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
             # table
             DataTable(
                 id='table--amount-of-scenes',
-                columns=[{"name": i, "id": i} for i in df_amount_of_scenes.columns],
-                data=df_amount_of_scenes.to_dict('records'),
+                columns=[{"name": i, "id": i} for i in df_sd_dataset_year_month.columns],
+                data=df_sd_dataset_year_month.to_dict('records'),
                 style_as_list_view=True,
                 fixed_rows={ 'headers': True, 'data': 0 },
                 style_table={
