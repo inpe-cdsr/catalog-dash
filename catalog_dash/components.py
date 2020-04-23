@@ -4,6 +4,7 @@ from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 import plotly.express as px
+from plotly.graph_objects import Figure, Bar
 
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
@@ -87,5 +88,56 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
             mapbox_style='open-street-map',
             margin={'t': 40, 'r': 5, 'b': 5, 'l': 5}
         )
+
+    return fig
+
+
+def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
+                                                  is_scatter_geo=True, sort_ascending=True,
+                                                  sort_by=['year_month', 'dataset']):
+
+    figure_height = 800
+
+    # I'm goint to build the `data` parameter of `Figure`
+    data = []
+
+    # I would like to build each `bar` based on each dataset
+    for dataset in df['dataset'].unique():
+        sub_df = df[(df['dataset'] == dataset)]
+
+        hovertext = 'Amount of Scenes: ' + sub_df['amount'].map(str) + '<br>' + \
+                    'Period: ' + sub_df['year_month'].map(str) + '<br>' + \
+                    'Dataset: ' + sub_df['dataset'].map(str)
+
+        data.append(
+            Bar(
+                {
+                    'x': sub_df['year_month'],
+                    'y': sub_df['amount'],
+                    'name': dataset,
+                    'text': sub_df['amount'],  # text inside the bar
+                    'textposition': 'auto',
+                    'hovertext': hovertext,
+                }
+            )
+        )
+
+    fig = Figure(
+        {
+            'data': data,
+            'layout': {
+                'title': 'Time series',
+                'xaxis': {'title': 'Period'},
+                'yaxis': {'title': 'Amount of scenes'},
+                'plot_bgcolor': colors['background'],
+                'paper_bgcolor': colors['background'],
+                'font': {
+                    'color': colors['text']
+                }
+            }
+        }
+    )
+
+    fig.update_layout(barmode='group', height=figure_height, xaxis_tickangle=-45)
 
     return fig

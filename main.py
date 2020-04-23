@@ -11,7 +11,8 @@ from dash_html_components import Div, P, H1, H3, H4
 from dash_table import DataTable
 from flask import Flask, redirect
 
-from catalog_dash.components import get_figure_of_graph_bubble_map_amount_of_scenes
+from catalog_dash.components import get_figure_of_graph_bubble_map_amount_of_scenes, \
+                                    get_figure_of_graph_bar_ploy_amount_of_scenes
 from catalog_dash.environment import IS_TO_USE_DATA_FROM_DB, DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
@@ -194,6 +195,9 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         ], style={'width': '50%', 'padding': '10px'}),
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
+    # graph--bar-plot--amount-of-scenes
+    Graph(id='graph--bar-plot--amount-of-scenes'),
+
     # graph--bubble-map--amount-of-scenes--with-animation-frame
     Graph(id='graph--bubble-map--amount-of-scenes--with-animation-frame'),
 
@@ -224,7 +228,8 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    Output('graph--bubble-map--amount-of-scenes--with-animation-frame', 'figure'),
+    [Output('graph--bar-plot--amount-of-scenes', 'figure'),
+    Output('graph--bubble-map--amount-of-scenes--with-animation-frame', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -248,16 +253,20 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    figure_01 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
+    figure_01 = get_figure_of_graph_bar_ploy_amount_of_scenes(df_sd_dataset_year_month,
+                                                              xaxis_range=xaxis_range,
+                                                              title='Amount of Scenes by Dataset')
+
+    figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,
                                                                 title='Amount of Scenes by Dataset in a specific location (long/lat)',
                                                                 animation_frame='year_month')
 
-    # figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
+    # figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
     #                                                             xaxis_range=xaxis_range,
     #                                                             title='Amount of Scenes by Dataset in a specific location (long/lat)')
 
-    return figure_01
+    return figure_01, figure_02
 
 
 if __name__ == '__main__':
