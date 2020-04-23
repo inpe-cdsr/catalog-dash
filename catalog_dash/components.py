@@ -108,11 +108,6 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
     # sort by date and dataset
     df_copy = df_copy.sort_values(by=['year_month', 'dataset'], ascending=sort_ascending)
 
-    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy was sorted')
-    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
-    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.dtypes: \n%s\n', df_copy.dtypes)
-    # logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.shape: %s\n', df_copy.shape)
-
     # choose the map type based on the passed flag
     if is_scatter_geo:
         # create a figure using `px.scatter_geo`

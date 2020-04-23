@@ -103,7 +103,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         Div([
             # title
             P(
-                children='Table Amount of Scenes by Dataset, Year-Month and Longitude/Latitude',
+                children='Table: Amount of Scenes by Dataset and Year-Month',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -164,9 +164,9 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
                 }
             ),
 
-            # Select the start and end date to arrange the graphs
+            # Select the start and end date to arrange the map
             P(
-                children='Select the start and end date to arrange the graphs:',
+                children='Select the start and end date to arrange the map:',
                 style={
                     # 'textAlign': 'left',
                     'color': colors['text']
@@ -194,11 +194,11 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
         ], style={'width': '50%', 'padding': '10px'}),
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-    # graph--time-series--amount-of-scenes
-    # Graph(id='graph--time-series--amount-of-scenes'),
+    # graph--bubble-map--amount-of-scenes--with-animation-frame
+    Graph(id='graph--bubble-map--amount-of-scenes--with-animation-frame'),
 
-    # graph--bubble-map--amount-of-scenes
-    Graph(id='graph--bubble-map--amount-of-scenes')
+    # graph--bubble-map--amount-of-scenes--without-animation-frame
+    # Graph(id='graph--bubble-map--amount-of-scenes--without-animation-frame')
 ])
 
 
@@ -224,7 +224,7 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    Output('graph--bubble-map--amount-of-scenes', 'figure'),
+    Output('graph--bubble-map--amount-of-scenes--with-animation-frame', 'figure'),
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -248,16 +248,16 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    # figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_sd_ds_ym_long_lat, xaxis_range=xaxis_range)
-
-    figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
+    figure_01 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,
                                                                 title='Amount of Scenes by Dataset in a specific location (long/lat)',
-                                                                animation_frame='year_month',
-                                                                is_scatter_geo=True,
-                                                                sort_ascending=True)
+                                                                animation_frame='year_month')
 
-    return figure_02
+    # figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
+    #                                                             xaxis_range=xaxis_range,
+    #                                                             title='Amount of Scenes by Dataset in a specific location (long/lat)')
+
+    return figure_01
 
 
 if __name__ == '__main__':
