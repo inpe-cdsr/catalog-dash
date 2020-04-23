@@ -92,10 +92,3 @@ class DatabaseConnection():
         df['date'] = to_datetime(df['date'])
 
         return df
-
-    def select_from_dash_amount_scenes_by_dataset_year_month_lon_lat(self):
-        df = self.execute('SELECT * FROM `dash_amount_scenes_by_dataset_year_month_lon_lat`;')
-
-        df.rename(columns={'_year_month': 'year_month'}, inplace=True)
-
-        return df

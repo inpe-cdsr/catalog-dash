@@ -44,15 +44,10 @@ if IS_TO_USE_DATA_FROM_DB:
 
     df_scene_dataset = db.select_from_scene_dataset()
     # df_scene_dataset.to_csv('data/scene_dataset.csv', index=False)
-
-    df_amount_of_scenes = db.select_from_dash_amount_scenes_by_dataset_year_month_lon_lat()
-    # df_amount_of_scenes.to_csv('data/amount_of_scenes.csv', index=False)
 else:
     # get the data from a CSV file
     df_scene_dataset = read_csv('data/scene_dataset.csv')
     df_scene_dataset['date'] = to_datetime(df_scene_dataset['date'])
-
-    df_amount_of_scenes = read_csv('data/amount_of_scenes.csv')
 
 
 logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head())
@@ -61,11 +56,6 @@ logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head(
 # logging.info('main.py - type(df_scene_dataset): %s\n', type(df_scene_dataset))
 
 # extra_logging(df_scene_dataset)
-
-logging.info('main.py - df_amount_of_scenes.head(): \n%s\n', df_amount_of_scenes.head())
-# logging.info('main.py - df_amount_of_scenes.shape: %s\n', df_amount_of_scenes.shape)
-# logging.info('main.py - df_amount_of_scenes.dtypes: \n%s\n', df_amount_of_scenes.dtypes)
-# logging.info('main.py - type(df_amount_of_scenes): %s\n', type(df_amount_of_scenes))
 
 
 # get the values
@@ -79,9 +69,22 @@ logging.info('main.py - max_end_date: %s', max_end_date)
 
 
 # I group my df by 'dataset' and 'year_month' to build the table
-df_sd_dataset_year_month = get_df_scene_dataset_grouped_by(df_scene_dataset, groupby=['dataset', 'year_month'])
+df_sd_dataset_year_month = get_df_scene_dataset_grouped_by(
+    df_scene_dataset,
+    group_by=['dataset', 'year_month']
+)
 
 logging.info('main.py - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
+
+
+# I group my df by 'dataset', 'year_month', longitude' and 'latitude' to build the map
+df_sd_ds_ym_long_lat = get_df_scene_dataset_grouped_by(
+    df_scene_dataset,
+    group_by=['dataset', 'year_month', 'longitude', 'latitude'],
+    sort_by=['year_month', 'dataset', 'longitude', 'latitude']
+)
+
+logging.info('main.py - df_sd_ds_ym_long_lat.head(): \n%s\n', df_sd_ds_ym_long_lat.head())
 
 
 app.layout = Div(style={'backgroundColor': colors['background']}, children=[
@@ -194,8 +197,8 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
     # graph--time-series--amount-of-scenes
     # Graph(id='graph--time-series--amount-of-scenes'),
 
-    # graph--bubble-map--amount-of-scenes-by-dataset
-    Graph(id='graph--bubble-map--amount-of-scenes-by-dataset')
+    # graph--bubble-map--amount-of-scenes
+    Graph(id='graph--bubble-map--amount-of-scenes')
 ])
 
 
@@ -221,7 +224,7 @@ def update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    Output('graph--bubble-map--amount-of-scenes-by-dataset', 'figure'),
+    Output('graph--bubble-map--amount-of-scenes', 'figure'),
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
 def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
@@ -245,9 +248,9 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    # figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_amount_of_scenes, xaxis_range=xaxis_range)
+    # figure_01 = get_figure_of_graph_time_series_amount_of_scenes(df_sd_ds_ym_long_lat, xaxis_range=xaxis_range)
 
-    figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_amount_of_scenes,
+    figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,
                                                                 title='Amount of Scenes by Dataset in a specific location (long/lat)',
                                                                 animation_frame='year_month',
