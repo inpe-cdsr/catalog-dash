@@ -19,14 +19,6 @@ def str2bool(value):
     # Source: https://stackoverflow.com/a/715468
     return str(value).lower() in ('true', 't', '1', 'yes', 'y')
 
-'''
-def get_text(df):
-    return 'Amount of Scenes: ' + df['amount'].map(str) + '<br>' + \
-            'Dataset: ' + df['dataset'].map(str) + '<br>' + \
-            'Year-Month: ' + df['year_month'].map(str) + '<br>' + \
-            'Longitude: ' + df['longitude'].map(str) + '<br>' + \
-            'Latitude: ' + df['latitude'].map(str)
-'''
 
 def get_formatted_date_as_string(date_string, output_format='%d/%m/%Y'):
     # get the date as datetime
@@ -55,3 +47,21 @@ def extra_logging(df):
         logging.info('extra_logging() - df_%s.shape: %s', year, df_20xx.shape)
         logging.info('extra_logging() - amount of datasets in df_%s: %s', year, len(df_20xx.dataset.unique()))
         logging.info('extra_logging() - datasets in df_%s: %s\n', year, df_20xx.dataset.unique())
+
+
+def get_logical_date_range(df, xaxis_range=None):
+    logging.info('get_logical_date_range()')
+
+    # if there are values, then get a boolean df according to the selected date range
+    if xaxis_range:
+        # [:-3] - extract the string without the last 3 chars, in other words, I get just the year and month
+        start_date = xaxis_range[0][:-3]
+        end_date = xaxis_range[1][:-3]
+
+        logging.info('get_logical_date_range() - start_date: %s', start_date)
+        logging.info('get_logical_date_range() - end_date: %s\n', end_date)
+
+        # extract a boolean df from the original one by the selected date range
+        return ((df['year_month'] >= start_date) & (df['year_month'] <= end_date))
+    else:
+        raise CatalogDashException('Invalid `xaxis_range`, it is empty!')

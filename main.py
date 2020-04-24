@@ -167,7 +167,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
 
             # Select the start and end date to arrange the map
             P(
-                children='Select the start and end date to arrange the map:',
+                children='Select the start and end date to arrange the charts:',
                 style={
                     # 'textAlign': 'left',
                     'color': colors['text']

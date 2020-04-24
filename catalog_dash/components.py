@@ -8,30 +8,12 @@ from plotly.graph_objects import Figure, Bar
 
 from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
-from catalog_dash.utils import colors
+from catalog_dash.utils import colors, get_logical_date_range
 
 # display a larger df on the console
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
-
-
-def get_logical_date_range(df, xaxis_range=None):
-    logging.info('get_logical_date_range()')
-
-    # if there are values, then get a boolean df according to the selected date range
-    if xaxis_range:
-        # [:-3] - extract the string without the last 3 chars, in other words, I get just the year and month
-        start_date = xaxis_range[0][:-3]
-        end_date = xaxis_range[1][:-3]
-
-        logging.info('get_logical_date_range() - start_date: %s', start_date)
-        logging.info('get_logical_date_range() - end_date: %s\n', end_date)
-
-        # extract a boolean df from the original one by the selected date range
-        return ((df['year_month'] >= start_date) & (df['year_month'] <= end_date))
-    else:
-        raise CatalogDashException('Invalid `xaxis_range`, it is empty!')
 
 
 def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
@@ -128,7 +110,20 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
         )
 
         # update the flag
-        fig.update_geos(showcountries=True)
+        fig.update_geos(
+            showcountries=True,
+            bgcolor=colors['background'],
+            showocean=True,
+            oceancolor='#fff'
+        )
+
+        fig.update_layout(
+            plot_bgcolor= colors['background'],
+            paper_bgcolor= colors['background'],
+            font={
+                'color': colors['text']
+            }
+        )
     else:
         # create a figure using `px.scatter_mapbox`
         fig = px.scatter_mapbox(
