@@ -71,7 +71,7 @@ logging.info('main.py - max_end_date: %s', max_end_date)
 # create a df with the information from `df_scene_dataset`
 data = [
     ['Amount of available datasets', len(df_scene_dataset.dataset.unique())],
-    ['Amount of records', len(df_scene_dataset)],
+    ['Amount of scenes', len(df_scene_dataset)],
     ['Minimum date', min_start_date.date()],
     ['Maximum date', max_end_date.date()]
 ]
