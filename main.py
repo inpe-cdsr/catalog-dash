@@ -2,7 +2,7 @@
 
 from datetime import datetime as dt
 from re import split
-from pandas import read_csv, to_datetime
+from pandas import read_csv, to_datetime, DataFrame
 
 from dash import Dash
 from dash_core_components import Graph, DatePickerRange
@@ -18,7 +18,8 @@ from catalog_dash.exception import CatalogDashException
 from catalog_dash.logging import logging
 from catalog_dash.model import DatabaseConnection
 from catalog_dash.services import get_df_scene_dataset_grouped_by
-from catalog_dash.utils import colors, external_stylesheets, get_formatted_date_as_string, extra_logging
+from catalog_dash.utils import colors, get_table_styles, external_stylesheets, get_formatted_date_as_string, \
+                               extra_logging
 
 
 logging.info('main.py - IS_TO_USE_DATA_FROM_DB: %s', IS_TO_USE_DATA_FROM_DB)
@@ -60,13 +61,23 @@ logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head(
 
 
 # get the values
-amount_of_datasets = len(df_scene_dataset.dataset.unique())
 min_start_date = df_scene_dataset['date'].min()  # min_start_date: 2016-05-01 00:00:00
 max_end_date = df_scene_dataset['date'].max()  # max_end_date: 2020-03-03 00:00:00
 
-logging.info('main.py - amount_of_datasets: %s', amount_of_datasets)
 logging.info('main.py - min_start_date: %s', min_start_date)
 logging.info('main.py - max_end_date: %s', max_end_date)
+
+
+# create a df with the information from `df_scene_dataset`
+data = [
+    ['Amount of available datasets', len(df_scene_dataset.dataset.unique())],
+    ['Amount of records', len(df_scene_dataset)],
+    ['Minimum date', min_start_date.date()],
+    ['Maximum date', max_end_date.date()]
+]
+df_information = DataFrame(data, columns=['information', 'value'])
+
+logging.info('main.py - df_information.head(): \n%s\n', df_information.head())
 
 
 # I group my df by 'dataset' and 'year_month' to build the table
@@ -100,7 +111,7 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
 
     # table--amount-of-scenes
     Div([
-        # left div - table
+        # left div - table amount of scenes
         Div([
             # title
             P(
@@ -110,43 +121,13 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
                     'color': colors['text']
                 }
             ),
-            # table
+            # table amount of scenes
             DataTable(
                 id='table--amount-of-scenes',
                 columns=[{"name": i, "id": i} for i in df_sd_dataset_year_month.columns],
                 data=df_sd_dataset_year_month.to_dict('records'),
-                style_as_list_view=True,
                 fixed_rows={ 'headers': True, 'data': 0 },
-                style_table={
-                    'maxHeight': '300px',
-                    'maxWidth': '1000px',
-                    'overflowY': 'scroll'
-                },
-                style_data_conditional=[
-                    {
-                        'if': {'row_index': 'odd'},
-                        'backgroundColor': 'rgb(130, 130, 130)'
-                    }
-                ],
-                style_filter={
-                    'backgroundColor': 'white'
-                },
-                style_header={
-                    'backgroundColor': 'rgb(30, 30, 30)',
-                    'fontWeight': 'bold'
-                },
-                style_cell_conditional=[
-                    {
-                        'if': {'column_id': 'year_month'},
-                        'textAlign': 'center'
-                    }
-                ],
-                style_cell={
-                    'textAlign': 'left',
-                    'minWidth': '100px',
-                    'backgroundColor': 'rgb(50, 50, 50)',
-                    'color': 'white'
-                },
+                **get_table_styles(),
                 sort_action='native',
                 sort_mode='multi',
                 filter_action='native',
@@ -156,13 +137,21 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
 
         # right div - information
         Div([
-            # How many datasets are available?
+            # title
             P(
-                children='How many datasets are available? {}'.format(amount_of_datasets),
+                children='Table: Information',
                 style={
-                    # 'textAlign': 'left',
+                    'textAlign': 'center',
                     'color': colors['text']
                 }
+            ),
+            # table information
+            DataTable(
+                id='table--information',
+                columns=[{"name": i, "id": i} for i in df_information.columns],
+                data=df_information.to_dict('records'),
+                fixed_rows={ 'headers': True, 'data': 0 },
+                **get_table_styles()
             ),
 
             # Select the start and end date to arrange the map
@@ -170,10 +159,10 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
                 children='Select the start and end date to arrange the charts:',
                 style={
                     # 'textAlign': 'left',
-                    'color': colors['text']
+                    'color': colors['text'],
+                    'margin-top': '20px'
                 }
             ),
-
             # date picker range
             Div([
                 DatePickerRange(
@@ -189,7 +178,8 @@ app.layout = Div(style={'backgroundColor': colors['background']}, children=[
                 id='output-container-date-picker-range',
                 style={
                     'textAlign': 'center',
-                    'color': colors['text']
+                    'color': colors['text'],
+                    'margin-top': '5px'
                 }
             ),
         ], style={'width': '50%', 'padding': '10px'}),

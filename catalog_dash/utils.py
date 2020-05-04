@@ -10,9 +10,39 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 
 colors = {
-    'background': '#111111',
+    'background': 'black',
     'text': '#7FDBFF'
 }
+
+
+def get_table_styles():
+    return {
+        'style_as_list_view': True,
+        'style_table': {
+            'maxHeight': '300px',
+            'maxWidth': '1000px',
+            'overflowY': 'scroll'
+        },
+        'style_data_conditional': [
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'gray'
+            }
+        ],
+        'style_filter': {
+            'backgroundColor': 'white'
+        },
+        'style_header': {
+            'backgroundColor': 'black',
+            'fontWeight': 'bold'
+        },
+        'style_cell': {
+            'textAlign': 'left',
+            'minWidth': '100px',
+            'backgroundColor': 'rgb(65, 65, 65)',
+            'color': 'white'
+        }
+    }
 
 
 def str2bool(value):
