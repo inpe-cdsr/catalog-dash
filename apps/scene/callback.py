@@ -62,8 +62,8 @@ def update_graph_x_number_of_scenes_based_on_date_picker_range(start_date, end_d
     logging.info('update_graph_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
     figure_01 = get_figure_of_graph_bar_plot_number_of_scenes(df_sd_dataset_year_month,
-                                                            xaxis_range=xaxis_range,
-                                                            title='Number of Scenes by Dataset')
+                                                              xaxis_range=xaxis_range,
+                                                              title='Number of Scenes by Dataset')
 
     figure_02 = get_figure_of_graph_bubble_map_number_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,

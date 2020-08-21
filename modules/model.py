@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import InternalServerError
 
 from modules.environment import MYSQL_DB_USER, MYSQL_DB_PASSWORD, MYSQL_DB_HOST, \
-                                     MYSQL_DB_PORT, MYSQL_DB_DATABASE
+                                MYSQL_DB_PORT, MYSQL_DB_DATABASE
 from modules.logging import logging
 
 

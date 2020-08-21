@@ -9,60 +9,9 @@ from app import app, url_base_pathname
 from modules.environment import IS_TO_USE_DATA_FROM_DB
 from modules.logging import logging
 from modules.model import DatabaseConnection
-from modules.services import get_df_scene_dataset_grouped_by
 from modules.utils import colors
 
-
-def get_table_styles():
-    return {
-        'style_as_list_view': True,
-        'style_table': {
-            'maxHeight': '300px',
-            'maxWidth': '1000px',
-            'overflowY': 'scroll'
-        },
-        'style_data_conditional': [
-            {
-                'if': {'row_index': 'odd'},
-                'backgroundColor': 'gray'
-            }
-        ],
-        'style_filter': {
-            'backgroundColor': 'white'
-        },
-        'style_header': {
-            'backgroundColor': 'black',
-            'fontWeight': 'bold'
-        },
-        'style_cell': {
-            'textAlign': 'left',
-            'minWidth': '100px',
-            'backgroundColor': 'rgb(65, 65, 65)',
-            'color': 'white'
-        }
-    }
-
-
-def extra_logging(df):
-    logging.info('extra_logging()\n')
-
-    df_copy = df.copy()
-
-    df_copy['year'] = df_copy['date'].map(lambda date: date.year).astype('category')
-
-    # get a list with the available years (e.g. [2016, 2017, 2018, 2019, 2020])
-    years = df_copy.year.unique()
-
-    logging.info('extra_logging() - available years: %s\n', years)
-
-    # show the information of the df_copy according to each year
-    for year in years:
-        df_20xx = df_copy[df_copy['year'] == year]
-
-        # logging.info('extra_logging() - df_%s.head(): \n%s\n', year, df_20xx.head())
-        logging.info('extra_logging() - df_%s.shape: %s', year, df_20xx.shape)
-        logging.info('extra_logging() - number of datasets in df_%s: %s', year, len(df_20xx.dataset.unique()))
-        logging.info('extra_logging() - datasets in df_%s: %s\n', year, df_20xx.dataset.unique())
+from .service import extra_logging, get_df_scene_dataset_grouped_by, get_table_styles
 
 
 if IS_TO_USE_DATA_FROM_DB:
