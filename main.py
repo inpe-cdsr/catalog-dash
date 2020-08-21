@@ -6,7 +6,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app, url_base_pathname
-from apps import *
+import apps
 
 from modules.environment import DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from modules.logging import logging
@@ -27,13 +27,13 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '{}/'.format(url_base_pathname):
-        return layout_index
+        return apps.layout_index
     if pathname == '{}/download'.format(url_base_pathname):
-        return layout_download
+        return apps.layout_download
     elif pathname == '{}/scene'.format(url_base_pathname):
-        return layout_scene
+        return apps.layout_scene
     else:
-        return '404'
+        return apps.layout_error_404
 
 
 if __name__ == '__main__':

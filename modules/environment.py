@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 """Get environment variables"""
+
 
 from os import environ
 from logging import DEBUG, INFO

@@ -1,14 +1,30 @@
 # -*- coding: utf-8 -*-
 
-import dash_core_components as dcc
-import dash_html_components as html
+from dash_core_components import Link
+from dash_html_components import Br, Div, H1, H3
 
-from app import app, url_base_pathname
+from app import url_base_pathname
+from modules.utils import colors
 
 
-layout = html.Div([
-    html.H3('Index'),
-    dcc.Link('Scene', href='{}/scene'.format(url_base_pathname)),
-    html.Br(),
-    dcc.Link('Download', href='{}/download'.format(url_base_pathname))
+layout = Div([
+    # title
+    H1(
+        children='catalog-dash',
+        style={
+            'textAlign': 'center',
+            'color': colors['text']
+        }
+    ),
+    # subtitle
+    H3(
+        children='Index',
+        style={
+            'textAlign': 'center',
+            'color': colors['text']
+        }
+    ),
+    Link('Scene', href='{}/scene'.format(url_base_pathname)),
+    Br(),
+    Link('Download', href='{}/download'.format(url_base_pathname))
 ])

@@ -13,21 +13,6 @@ from modules.services import get_df_scene_dataset_grouped_by
 from modules.utils import colors
 
 
-# layout = html.Div([
-#     html.H3('Scene'),
-#     dcc.Dropdown(
-#         id='app-1-dropdown',
-#         options=[
-#             {'label': 'App 1 - {}'.format(i), 'value': i} for i in [
-#                 'NYC', 'MTL', 'LA'
-#             ]
-#         ]
-#     ),
-#     html.Div(id='app-1-display-value'),
-#     dcc.Link('Download', href='{}/download'.format(url_base_pathname))
-# ])
-
-
 def get_table_styles():
     return {
         'style_as_list_view': True,
@@ -139,10 +124,18 @@ df_sd_ds_ym_long_lat = get_df_scene_dataset_grouped_by(
 logging.info('main.py - df_sd_ds_ym_long_lat.head(): \n%s\n', df_sd_ds_ym_long_lat.head())
 
 
-layout = Div(style={'backgroundColor': colors['background']}, children=[
+layout = Div([
     # title
     H1(
         children='catalog-dash',
+        style={
+            'textAlign': 'center',
+            'color': colors['text']
+        }
+    ),
+    # subtitle
+    H3(
+        children='Scene table analysis',
         style={
             'textAlign': 'center',
             'color': colors['text']

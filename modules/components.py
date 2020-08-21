@@ -10,6 +10,7 @@ from modules.exception import CatalogDashException
 from modules.logging import logging
 from modules.utils import colors
 
+
 # display a larger df on the console
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)

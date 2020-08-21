@@ -14,13 +14,6 @@ from modules.utils import get_formatted_date_as_string
 from .layout import *
 
 
-# @app.callback(
-#     Output('app-1-display-value', 'children'),
-#     [Input('app-1-dropdown', 'value')])
-# def app1_display_value(value):
-#     return 'You have selected "{}"'.format(value)
-
-
 @app.callback(
     Output('output-container-date-picker-range', 'children'),
     [Input('date-picker-range', 'start_date'),
