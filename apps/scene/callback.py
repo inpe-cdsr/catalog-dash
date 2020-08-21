@@ -5,13 +5,13 @@ from datetime import datetime as dt
 from re import split
 
 from app import app
-from modules.components import get_figure_of_graph_bubble_map_amount_of_scenes, \
-                                    get_figure_of_graph_bar_ploy_amount_of_scenes
 from modules.exception import CatalogDashException
 from modules.logging import logging
 from modules.utils import get_formatted_date_as_string
 
 from .layout import *
+from .service import get_figure_of_graph_bar_ploy_amount_of_scenes, \
+                     get_figure_of_graph_bubble_map_amount_of_scenes
 
 
 @app.callback(
@@ -63,15 +63,15 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
 
     figure_01 = get_figure_of_graph_bar_ploy_amount_of_scenes(df_sd_dataset_year_month,
                                                             xaxis_range=xaxis_range,
-                                                            title='Amount of Scenes by Dataset')
+                                                            title='Number of Scenes by Dataset')
 
     figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,
-                                                                title='Amount of Scenes by Dataset in a specific location (long/lat)',
+                                                                title='Number of Scenes by Dataset in a specific location (long/lat)',
                                                                 animation_frame='year_month')
 
     # figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
     #                                                             xaxis_range=xaxis_range,
-    #                                                             title='Amount of Scenes by Dataset in a specific location (long/lat)')
+    #                                                             title='Number of Scenes by Dataset in a specific location (long/lat)')
 
     return figure_01, figure_02

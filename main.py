@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import dash_core_components as dcc
-import dash_html_components as html
+from dash_core_components import Location
 from dash.dependencies import Input, Output
+from dash_html_components import Div
 
 from app import app, url_base_pathname
 import apps
@@ -17,9 +17,9 @@ logging.info('main.py - SERVER_HOST: %s', SERVER_HOST)
 logging.info('main.py - SERVER_PORT: %s\n', SERVER_PORT)
 
 
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+app.layout = Div([
+    Location(id='url', refresh=False),
+    Div(id='page-content')
 ])
 
 

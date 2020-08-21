@@ -17,8 +17,8 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 
-def get_logical_date_range(df, xaxis_range=None):
-    logging.info('get_logical_date_range()')
+def __get_logical_date_range(df, xaxis_range=None):
+    logging.info('__get_logical_date_range()')
 
     # if there are values, then get a boolean df according to the selected date range
     if xaxis_range:
@@ -26,8 +26,8 @@ def get_logical_date_range(df, xaxis_range=None):
         start_date = xaxis_range[0][:-3]
         end_date = xaxis_range[1][:-3]
 
-        logging.info('get_logical_date_range() - start_date: %s', start_date)
-        logging.info('get_logical_date_range() - end_date: %s\n', end_date)
+        logging.info('__get_logical_date_range() - start_date: %s', start_date)
+        logging.info('__get_logical_date_range() - end_date: %s\n', end_date)
 
         # extract a boolean df from the original one by the selected date range
         return ((df['year_month'] >= start_date) & (df['year_month'] <= end_date))
@@ -46,7 +46,7 @@ def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None
     logging.info('get_figure_of_graph_bar_ploy_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
     logging.info('get_figure_of_graph_bar_ploy_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    logical_date_range = get_logical_date_range(df_copy, xaxis_range)
+    logical_date_range = __get_logical_date_range(df_copy, xaxis_range)
 
     # I'm goint to build the `data` parameter of `Figure`
     data = []
@@ -55,7 +55,7 @@ def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None
     for dataset in df_copy['dataset'].unique():
         sub_df = df_copy[(df_copy['dataset'] == dataset) & logical_date_range]
 
-        hovertext = 'Amount of Scenes: ' + sub_df['amount'].map(str) + '<br>' + \
+        hovertext = 'Number of Scenes: ' + sub_df['amount'].map(str) + '<br>' + \
                     'Period: ' + sub_df['year_month'].map(str) + '<br>' + \
                     'Dataset: ' + sub_df['dataset'].map(str)
 
@@ -78,7 +78,7 @@ def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None
             'layout': {
                 'title': title,
                 'xaxis': {'title': 'Period'},
-                'yaxis': {'title': 'Amount of scenes'},
+                'yaxis': {'title': 'Number of scenes'},
                 'plot_bgcolor': colors['background'],
                 'paper_bgcolor': colors['background'],
                 'font': {
@@ -104,7 +104,7 @@ def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=No
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
     logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    logical_date_range = get_logical_date_range(df_copy, xaxis_range)
+    logical_date_range = __get_logical_date_range(df_copy, xaxis_range)
 
     # get a sub set from the df according to the selected date range
     df_copy = df_copy[logical_date_range]
