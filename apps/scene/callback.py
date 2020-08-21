@@ -10,8 +10,8 @@ from modules.logging import logging
 from modules.utils import get_formatted_date_as_string
 
 from .layout import *
-from .service import get_figure_of_graph_bar_ploy_amount_of_scenes, \
-                     get_figure_of_graph_bubble_map_amount_of_scenes
+from .service import get_figure_of_graph_bar_plot_number_of_scenes, \
+                     get_figure_of_graph_bubble_map_number_of_scenes
 
 
 @app.callback(
@@ -40,11 +40,11 @@ def update_output_container_date_picker_range(start_date, end_date):
     Output('graph--bubble-map--number-of-scenes--with-animation-frame', 'figure')],
     [Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date')])
-def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_date):
-    logging.info('update_graph_amount_of_scenes()\n')
+def update_graph_x_number_of_scenes_based_on_date_picker_range(start_date, end_date):
+    logging.info('update_graph_number_of_scenes()\n')
 
-    logging.info('update_graph_amount_of_scenes() - start_date: %s', start_date)
-    logging.info('update_graph_amount_of_scenes() - end_date: %s', end_date)
+    logging.info('update_graph_number_of_scenes() - start_date: %s', start_date)
+    logging.info('update_graph_number_of_scenes() - end_date: %s', end_date)
 
     # convert the [start|end]_date from str to datetime
     start_date = dt.strptime(split('T| ', start_date)[0], '%Y-%m-%d')
@@ -59,19 +59,15 @@ def update_graph_x_amount_of_scenes_based_on_date_picker_range(start_date, end_d
     # convert the dates from datetime to str again in order to pass the xaxis range to build the figure
     xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]
 
-    logging.info('update_graph_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
+    logging.info('update_graph_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
-    figure_01 = get_figure_of_graph_bar_ploy_amount_of_scenes(df_sd_dataset_year_month,
+    figure_01 = get_figure_of_graph_bar_plot_number_of_scenes(df_sd_dataset_year_month,
                                                             xaxis_range=xaxis_range,
                                                             title='Number of Scenes by Dataset')
 
-    figure_02 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
+    figure_02 = get_figure_of_graph_bubble_map_number_of_scenes(df_sd_ds_ym_long_lat,
                                                                 xaxis_range=xaxis_range,
                                                                 title='Number of Scenes by Dataset in a specific location (long/lat)',
                                                                 animation_frame='year_month')
-
-    # figure_03 = get_figure_of_graph_bubble_map_amount_of_scenes(df_sd_ds_ym_long_lat,
-    #                                                             xaxis_range=xaxis_range,
-    #                                                             title='Number of Scenes by Dataset in a specific location (long/lat)')
 
     return figure_01, figure_02

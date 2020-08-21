@@ -35,16 +35,16 @@ def __get_logical_date_range(df, xaxis_range=None):
         raise CatalogDashException('Invalid `xaxis_range`, it is empty!')
 
 
-def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
+def get_figure_of_graph_bar_plot_number_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
                                                   is_scatter_geo=True, sort_ascending=True,
                                                   sort_by=['year_month', 'dataset']):
-    logging.info('get_figure_of_graph_bar_ploy_amount_of_scenes()')
+    logging.info('get_figure_of_graph_bar_plot_number_of_scenes()')
 
     figure_height = 800
     df_copy = df.copy()
 
-    logging.info('get_figure_of_graph_bar_ploy_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
-    logging.info('get_figure_of_graph_bar_ploy_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
+    logging.info('get_figure_of_graph_bar_plot_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    logging.info('get_figure_of_graph_bar_plot_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
     logical_date_range = __get_logical_date_range(df_copy, xaxis_range)
 
@@ -93,16 +93,16 @@ def get_figure_of_graph_bar_ploy_amount_of_scenes(df, xaxis_range=[], title=None
     return fig
 
 
-def get_figure_of_graph_bubble_map_amount_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
+def get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
                                                     is_scatter_geo=True, sort_ascending=True,
                                                     sort_by=['year_month', 'dataset']):
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes()\n')
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes()\n')
 
     figure_height = 800
     df_copy = df.copy()
 
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
-    logging.info('get_figure_of_graph_bubble_map_amount_of_scenes() - xaxis_range: %s\n', xaxis_range)
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
 
     logical_date_range = __get_logical_date_range(df_copy, xaxis_range)
 
