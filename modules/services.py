@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from catalog_dash.logging import logging
+from modules.logging import logging
 
 
 def get_df_scene_dataset_grouped_by(df_scene_dataset, group_by=['dataset', 'year_month'], sort_by=None):

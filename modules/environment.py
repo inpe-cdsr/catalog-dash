@@ -3,7 +3,7 @@
 from os import environ
 from logging import DEBUG, INFO
 
-from catalog_dash.utils import str2bool
+from modules.utils import str2bool
 
 
 os_environ_get = environ.get
