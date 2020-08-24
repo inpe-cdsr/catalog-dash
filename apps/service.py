@@ -7,7 +7,7 @@ from modules.exception import CatalogDashException
 from modules.logging import logging
 
 
-# display a larger df on the console
+# display a larger dataframe on the console
 set_option('display.max_rows', 500)
 set_option('display.max_columns', 500)
 set_option('display.width', 1000)

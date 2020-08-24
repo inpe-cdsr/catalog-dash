@@ -13,17 +13,13 @@ from modules.model import DatabaseConnection
 # database connection
 db = DatabaseConnection()
 
+# create the download dataframe from the Download table in the database
 df_download = db.select_from_download()
 
-
 logging.info('download.layout - df_download.head(): \n%s\n', df_download.head())
-# logging.info('download.layout- df_download.shape: %s\n', df_download.shape)
-# logging.info('download.layout- df_download.dtypes: \n%s\n', df_download.dtypes)
-# logging.info('download.layout- type(df_download): %s\n', type(df_download))
 
-# extra_logging(df_download)
 
-# get the values
+# get them minimum and maximum dates
 min_start_date = df_download['date'].min()  # min_start_date: 2020-06-29 16:44:46
 max_end_date = df_download['date'].max()  # max_end_date: 2020-08-07 15:30:33
 
@@ -42,7 +38,15 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
 
-# filter_df_by
+# I group my df by 'scene_id' and 'year_month' to build the table
+df_d_scene_id_year_month = filter_df_by(
+    df_download,
+    group_by=['scene_id', 'year_month'],
+    sort_by=['year_month', 'scene_id'],
+    ascending=False
+)
+
+logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_scene_id_year_month.head())
 
 
 layout = html.Div([

@@ -33,7 +33,7 @@ logging.info('scene.layout - df_scene_dataset.head(): \n%s\n', df_scene_dataset.
 # extra_logging(df_scene_dataset)
 
 
-# get the values
+# get them minimum and maximum dates
 min_start_date = df_scene_dataset['date'].min()  # min_start_date: 2016-05-01 00:00:00
 max_end_date = df_scene_dataset['date'].max()  # max_end_date: 2020-03-03 00:00:00
 
