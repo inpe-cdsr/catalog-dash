@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output
 
 from app import app
 
+from apps.download.layout import *
 from apps.service import __get_date_picker_range_message
 
 
