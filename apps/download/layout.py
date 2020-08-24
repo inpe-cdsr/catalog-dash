@@ -2,17 +2,12 @@
 
 import dash_core_components as dcc
 import dash_html_components as html
-from pandas import DataFrame, set_option
+from pandas import DataFrame
 
 from app import app, url_base_pathname
+from apps.service import filter_df_by
 from modules.logging import logging
 from modules.model import DatabaseConnection
-
-
-# display a larger df on the console
-set_option('display.max_rows', 500)
-set_option('display.max_columns', 500)
-set_option('display.width', 1000)
 
 
 # database connection
@@ -45,6 +40,9 @@ data = [
 df_information = DataFrame(data, columns=['information', 'value'])
 
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
+
+
+# filter_df_by
 
 
 layout = html.Div([

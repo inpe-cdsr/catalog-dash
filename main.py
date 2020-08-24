@@ -7,7 +7,6 @@ from dash_html_components import Div
 
 from app import app, url_base_pathname
 import apps
-
 from modules.environment import DEBUG_MODE, SERVER_HOST, SERVER_PORT
 from modules.logging import logging
 

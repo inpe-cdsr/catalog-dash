@@ -6,12 +6,11 @@ from dash_table import DataTable
 from pandas import read_csv, to_datetime, DataFrame
 
 from app import app, url_base_pathname
+from apps.service import filter_df_by, get_table_styles
 from modules.environment import IS_TO_USE_DATA_FROM_DB
 from modules.logging import logging
 from modules.model import DatabaseConnection
 from modules.utils import colors
-
-from .service import extra_logging, filter_df_by, get_table_styles
 
 
 if IS_TO_USE_DATA_FROM_DB:
