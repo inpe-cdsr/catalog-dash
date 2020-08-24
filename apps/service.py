@@ -5,6 +5,7 @@ from pandas import set_option
 
 from modules.exception import CatalogDashException
 from modules.logging import logging
+from modules.utils import get_formatted_date_as_string
 
 
 # display a larger dataframe on the console
@@ -90,3 +91,24 @@ def filter_df_by(df, group_by=['dataset', 'year_month'], sort_by=None, ascending
     df_copy = df_copy[columns]
 
     return df_copy
+
+
+##################################################
+# callback services
+##################################################
+
+def __get_date_picker_range_message(start_date, end_date):
+    # Source: https://dash.plotly.com/dash-core-components/datepickerrange
+
+    message = ''
+
+    if start_date is not None:
+        message += 'Start Date: {} | '.format(get_formatted_date_as_string(start_date))
+
+    if end_date is not None:
+        message += 'End Date: {}'.format(get_formatted_date_as_string(end_date))
+
+    if message == '':
+        return 'Select a date to see it displayed here'
+
+    return message

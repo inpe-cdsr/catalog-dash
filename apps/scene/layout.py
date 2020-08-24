@@ -92,9 +92,9 @@ layout = Div([
         }
     ),
 
-    # table--number-of-scenes
+    # number of scenes and information tables
     Div([
-        # left div - table number of scenes
+        # left div - number of scenes table
         Div([
             # title
             P(
@@ -104,9 +104,9 @@ layout = Div([
                     'color': colors['text']
                 }
             ),
-            # table number of scenes
+            # number of scenes table
             DataTable(
-                id='table--number-of-scenes',
+                id='scene--table--number-of-scenes',
                 columns=[{"name": i, "id": i} for i in df_sd_dataset_year_month.columns],
                 data=df_sd_dataset_year_month.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
@@ -118,7 +118,7 @@ layout = Div([
             ),
         ], style={'width': '50%', 'padding': '10px'}),
 
-        # right div - information
+        # right div - information table
         Div([
             # title
             P(
@@ -130,7 +130,7 @@ layout = Div([
             ),
             # table information
             DataTable(
-                id='table--information',
+                id='scene--table--information',
                 columns=[{"name": i, "id": i} for i in df_information.columns],
                 data=df_information.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
@@ -149,7 +149,7 @@ layout = Div([
             # date picker range
             Div([
                 DatePickerRange(
-                    id='date-picker-range',
+                    id='scene--date-picker-range',
                     display_format='DD/MM/YYYY',
                     min_date_allowed=min_start_date,
                     max_date_allowed=max_end_date,
@@ -158,7 +158,7 @@ layout = Div([
                 )
             ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
             P(
-                id='output-container-date-picker-range',
+                id='scene--output-container-date-picker-range',
                 style={
                     'textAlign': 'center',
                     'color': colors['text'],
@@ -168,11 +168,11 @@ layout = Div([
         ], style={'width': '50%', 'padding': '10px'}),
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-    # graph--bar-plot--number-of-scenes
-    Graph(id='graph--bar-plot--number-of-scenes'),
+    # scene--graph--bar-plot--number-of-scenes
+    Graph(id='scene--graph--bar-plot--number-of-scenes'),
 
-    # graph--bubble-map--number-of-scenes--with-animation-frame
-    Graph(id='graph--bubble-map--number-of-scenes--with-animation-frame'),
+    # scene--graph--bubble-map--number-of-scenes--with-animation-frame
+    Graph(id='scene--graph--bubble-map--number-of-scenes--with-animation-frame'),
 
     # graph--bubble-map--number-of-scenes--without-animation-frame
     # Graph(id='graph--bubble-map--number-of-scenes--without-animation-frame')
