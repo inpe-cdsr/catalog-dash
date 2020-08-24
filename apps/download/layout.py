@@ -29,8 +29,8 @@ logging.info('download.layout - df_download.head(): \n%s\n', df_download.head())
 # extra_logging(df_download)
 
 # get the values
-min_start_date = df_download['datetime'].min()  # min_start_date: 2020-06-29 16:44:46
-max_end_date = df_download['datetime'].max()  # max_end_date: 2020-08-07 15:30:33
+min_start_date = df_download['date'].min()  # min_start_date: 2020-06-29 16:44:46
+max_end_date = df_download['date'].max()  # max_end_date: 2020-08-07 15:30:33
 
 logging.info('download.layout - min_start_date: %s', min_start_date)
 logging.info('download.layout - max_end_date: %s', max_end_date)

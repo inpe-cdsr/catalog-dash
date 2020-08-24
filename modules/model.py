@@ -95,11 +95,11 @@ class DatabaseConnection():
 
     def select_from_download(self):
         df = self.execute('''
-            SELECT id, userId as user_id, sceneId as scene_id, path, ip, date as datetime
+            SELECT id, userId as user_id, sceneId as scene_id, path, ip, date
             FROM `Download`;
         ''')
 
-        # convert datetime, from `str` to a `datetime`
-        df['datetime'] = to_datetime(df['datetime'])
+        # convert from `str` to a `datetime` type
+        df['date'] = to_datetime(df['date'])
 
         return df

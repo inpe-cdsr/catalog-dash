@@ -11,7 +11,7 @@ from modules.logging import logging
 from modules.model import DatabaseConnection
 from modules.utils import colors
 
-from .service import extra_logging, get_df_scene_dataset_grouped_by, get_table_styles
+from .service import extra_logging, filter_df_by, get_table_styles
 
 
 if IS_TO_USE_DATA_FROM_DB:
@@ -55,16 +55,18 @@ logging.info('scene.layout - df_information.head(): \n%s\n', df_information.head
 
 
 # I group my df by 'dataset' and 'year_month' to build the table
-df_sd_dataset_year_month = get_df_scene_dataset_grouped_by(
+df_sd_dataset_year_month = filter_df_by(
     df_scene_dataset,
-    group_by=['dataset', 'year_month']
+    group_by=['dataset', 'year_month'],
+    sort_by=['year_month', 'dataset'],
+    ascending=False
 )
 
 logging.info('scene.layout - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
 
 
 # I group my df by 'dataset', 'year_month', longitude' and 'latitude' to build the map
-df_sd_ds_ym_long_lat = get_df_scene_dataset_grouped_by(
+df_sd_ds_ym_long_lat = filter_df_by(
     df_scene_dataset,
     group_by=['dataset', 'year_month', 'longitude', 'latitude'],
     sort_by=['year_month', 'dataset', 'longitude', 'latitude']
@@ -136,9 +138,9 @@ layout = Div([
                 **get_table_styles()
             ),
 
-            # Select the start and end date to arrange the map
+            # Select the start and end date to organize the map
             P(
-                children='Select the start and end date to arrange the charts:',
+                children='Select the start and end date to organize the charts:',
                 style={
                     # 'textAlign': 'left',
                     'color': colors['text'],
