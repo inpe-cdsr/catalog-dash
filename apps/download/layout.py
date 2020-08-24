@@ -40,7 +40,7 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
 
-# I group my df by 'scene_id' and 'year_month' to build the table
+# I group my df by `scene_id` and `year_month` to build the table
 df_d_scene_id_year_month = filter_df_by(
     df_download,
     group_by=['scene_id', 'year_month'],
@@ -49,6 +49,16 @@ df_d_scene_id_year_month = filter_df_by(
 )
 
 logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_scene_id_year_month.head())
+
+# I group my df by `user_id`, `scene_id` and `year_month` to build the table
+df_d_user_id_scene_id_year_month = filter_df_by(
+    df_download,
+    group_by=['user_id', 'scene_id', 'year_month'],
+    sort_by=['year_month', 'user_id', 'scene_id'],
+    ascending=False
+)
+
+logging.info('download.layout - df_d_user_id_scene_id_year_month.head(): \n%s\n', df_d_user_id_scene_id_year_month.head())
 
 
 layout = Div([
@@ -69,13 +79,68 @@ layout = Div([
         }
     ),
 
-    # table--number-of-downloaded-scenes
+    # information table
+    Div([
+        # title
+        P(
+            children='Table: Information',
+            style={
+                'textAlign': 'center',
+                'color': colors['text']
+            }
+        ),
+        # table information
+        Div([
+            Div([
+                DataTable(
+                    id='table--information',
+                    columns=[{"name": i, "id": i} for i in df_information.columns],
+                    data=df_information.to_dict('records'),
+                    fixed_rows={ 'headers': True, 'data': 0 },
+                    **get_table_styles()
+                ),
+            ], style={'max-width': '500px'}),
+        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+
+        # Select the start and end date to organize the map
+        P(
+            children='Select the start and end date to organize the charts:',
+            style={
+                'textAlign': 'center',
+                'color': colors['text'],
+                'margin-top': '20px'
+            }
+        ),
+        # date picker range
+        Div([
+            Div([
+                DatePickerRange(
+                    id='download--date-picker-range',
+                    display_format='DD/MM/YYYY',
+                    min_date_allowed=min_start_date,
+                    max_date_allowed=max_end_date,
+                    start_date=min_start_date,
+                    end_date=max_end_date
+                )
+            ], style={'padding-right': '10px'}),
+            P(
+                id='download--output-container-date-picker-range',
+                style={
+                    'textAlign': 'center',
+                    'color': colors['text'],
+                    'margin-top': '5px'
+                }
+            ),
+        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+    ], style={'padding': '10px'}),
+
+    # tables
     Div([
         # left div - table number of downloaded scenes
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by Scene Id and Year-Month',
+                children='Table: Number of Downloaded Scenes by scene_id and year_month',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -93,64 +158,30 @@ layout = Div([
                 filter_action='native',
                 page_size=50,
             ),
-        ], style={'width': '50%', 'padding': '10px'}),
+        ], style={'width': '40%', 'padding': '10px'}),
 
-        # right div - information
+        # right div - table number of downloaded scenes by user
         Div([
             # title
             P(
-                children='Table: Information',
+                children='Table: Number of Downloaded Scenes by user_id, scene_id and year_month',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
                 }
             ),
-            # table information
+            # table number of download scenes
             DataTable(
-                id='table--information',
-                columns=[{"name": i, "id": i} for i in df_information.columns],
-                data=df_information.to_dict('records'),
+                id='table--number-of-downloaded-scenes',
+                columns=[{"name": i, "id": i} for i in df_d_user_id_scene_id_year_month.columns],
+                data=df_d_user_id_scene_id_year_month.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
-                **get_table_styles()
+                **get_table_styles(),
+                sort_action='native',
+                sort_mode='multi',
+                filter_action='native',
+                page_size=50,
             ),
-
-            # Select the start and end date to organize the map
-            P(
-                children='Select the start and end date to organize the charts:',
-                style={
-                    # 'textAlign': 'left',
-                    'color': colors['text'],
-                    'margin-top': '20px'
-                }
-            ),
-            # date picker range
-            Div([
-                DatePickerRange(
-                    id='download--date-picker-range',
-                    display_format='DD/MM/YYYY',
-                    min_date_allowed=min_start_date,
-                    max_date_allowed=max_end_date,
-                    start_date=min_start_date,
-                    end_date=max_end_date
-                )
-            ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-            P(
-                id='download--output-container-date-picker-range',
-                style={
-                    'textAlign': 'center',
-                    'color': colors['text'],
-                    'margin-top': '5px'
-                }
-            ),
-        ], style={'width': '50%', 'padding': '10px'}),
-    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-
-    # # graph--bar-plot--number-of-scenes
-    # Graph(id='graph--bar-plot--number-of-scenes'),
-
-    # # graph--bubble-map--number-of-scenes--with-animation-frame
-    # Graph(id='graph--bubble-map--number-of-scenes--with-animation-frame'),
-
-    # graph--bubble-map--number-of-scenes--without-animation-frame
-    # Graph(id='graph--bubble-map--number-of-scenes--without-animation-frame')
+        ], style={'width': '60%', 'padding': '10px'})
+    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'})
 ])

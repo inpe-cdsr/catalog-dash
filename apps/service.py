@@ -23,7 +23,6 @@ def get_table_styles():
         'style_as_list_view': True,
         'style_table': {
             'maxHeight': '300px',
-            'maxWidth': '1000px',
             'overflowY': 'scroll'
         },
         'style_data_conditional': [
