@@ -26,10 +26,10 @@ else:
     df_scene_dataset['date'] = to_datetime(df_scene_dataset['date'])
 
 
-logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head())
-# logging.info('main.py - df_scene_dataset.shape: %s\n', df_scene_dataset.shape)
-# logging.info('main.py - df_scene_dataset.dtypes: \n%s\n', df_scene_dataset.dtypes)
-# logging.info('main.py - type(df_scene_dataset): %s\n', type(df_scene_dataset))
+logging.info('scene.layout - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head())
+# logging.info('scene.layout - df_scene_dataset.shape: %s\n', df_scene_dataset.shape)
+# logging.info('scene.layout - df_scene_dataset.dtypes: \n%s\n', df_scene_dataset.dtypes)
+# logging.info('scene.layout - type(df_scene_dataset): %s\n', type(df_scene_dataset))
 
 # extra_logging(df_scene_dataset)
 
@@ -38,8 +38,8 @@ logging.info('main.py - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head(
 min_start_date = df_scene_dataset['date'].min()  # min_start_date: 2016-05-01 00:00:00
 max_end_date = df_scene_dataset['date'].max()  # max_end_date: 2020-03-03 00:00:00
 
-logging.info('main.py - min_start_date: %s', min_start_date)
-logging.info('main.py - max_end_date: %s', max_end_date)
+logging.info('scene.layout - min_start_date: %s', min_start_date)
+logging.info('scene.layout - max_end_date: %s', max_end_date)
 
 
 # create a df with the information from `df_scene_dataset`
@@ -51,7 +51,7 @@ data = [
 ]
 df_information = DataFrame(data, columns=['information', 'value'])
 
-logging.info('main.py - df_information.head(): \n%s\n', df_information.head())
+logging.info('scene.layout - df_information.head(): \n%s\n', df_information.head())
 
 
 # I group my df by 'dataset' and 'year_month' to build the table
@@ -60,7 +60,7 @@ df_sd_dataset_year_month = get_df_scene_dataset_grouped_by(
     group_by=['dataset', 'year_month']
 )
 
-logging.info('main.py - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
+logging.info('scene.layout - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
 
 
 # I group my df by 'dataset', 'year_month', longitude' and 'latitude' to build the map
@@ -70,7 +70,7 @@ df_sd_ds_ym_long_lat = get_df_scene_dataset_grouped_by(
     sort_by=['year_month', 'dataset', 'longitude', 'latitude']
 )
 
-logging.info('main.py - df_sd_ds_ym_long_lat.head(): \n%s\n', df_sd_ds_ym_long_lat.head())
+logging.info('scene.layout - df_sd_ds_ym_long_lat.head(): \n%s\n', df_sd_ds_ym_long_lat.head())
 
 
 layout = Div([

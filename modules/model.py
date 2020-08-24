@@ -92,3 +92,14 @@ class DatabaseConnection():
         df['date'] = to_datetime(df['date'])
 
         return df
+
+    def select_from_download(self):
+        df = self.execute('''
+            SELECT id, userId as user_id, sceneId as scene_id, path, ip, date as datetime
+            FROM `Download`;
+        ''')
+
+        # convert datetime, from `str` to a `datetime`
+        df['datetime'] = to_datetime(df['datetime'])
+
+        return df
