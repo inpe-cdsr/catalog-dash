@@ -44,7 +44,7 @@ logging.info('download.layout - df_information.head(): \n%s\n', df_information.h
 df_d_scene_id_year_month = filter_df_by(
     df_download,
     group_by=['scene_id', 'year_month'],
-    sort_by=['year_month', 'scene_id'],
+    sort_by=['amount', 'year_month', 'scene_id'],
     ascending=False
 )
 
@@ -54,7 +54,7 @@ logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_s
 df_d_user_id_scene_id_year_month = filter_df_by(
     df_download,
     group_by=['user_id', 'scene_id', 'year_month'],
-    sort_by=['year_month', 'user_id', 'scene_id'],
+    sort_by=['amount', 'year_month', 'user_id', 'scene_id'],
     ascending=False
 )
 
