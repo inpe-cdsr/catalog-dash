@@ -102,9 +102,9 @@ layout = Div([
             ], style={'max-width': '500px'}),
         ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-        # Select the start and end date to organize the map
+        # Select the start and end date to organize the tables and charts
         P(
-            children='Select the start and end date to organize the charts:',
+            children='Select the start and end date to organize the tables and charts:',
             style={
                 'textAlign': 'center',
                 'color': colors['text'],
@@ -148,7 +148,7 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='table--number-of-downloaded-scenes',
+                id='download--table--number-of-downloaded-scenes-by-scene_id-year_month',
                 columns=[{"name": i, "id": i} for i in df_d_scene_id_year_month.columns],
                 data=df_d_scene_id_year_month.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
@@ -172,7 +172,7 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='table--number-of-downloaded-scenes',
+                id='download--table--number-of-downloaded-scenes-by-user_id-scene_id-year_month',
                 columns=[{"name": i, "id": i} for i in df_d_user_id_scene_id_year_month.columns],
                 data=df_d_user_id_scene_id_year_month.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },

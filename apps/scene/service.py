@@ -3,6 +3,7 @@
 import plotly.express as px
 from plotly.graph_objects import Figure, Bar
 
+from apps.service import __get_logical_date_range
 from modules.exception import CatalogDashException
 from modules.logging import logging
 from modules.utils import colors
@@ -11,24 +12,6 @@ from modules.utils import colors
 ##################################################
 # callback services
 ##################################################
-
-def __get_logical_date_range(df, xaxis_range=None):
-    logging.info('__get_logical_date_range()')
-
-    # if there are values, then get a boolean df according to the selected date range
-    if xaxis_range:
-        # [:-3] - extract the string without the last 3 chars, in other words, I get just the year and month
-        start_date = xaxis_range[0][:-3]
-        end_date = xaxis_range[1][:-3]
-
-        logging.info('__get_logical_date_range() - start_date: %s', start_date)
-        logging.info('__get_logical_date_range() - end_date: %s\n', end_date)
-
-        # extract a boolean df from the original one by the selected date range
-        return ((df['year_month'] >= start_date) & (df['year_month'] <= end_date))
-    else:
-        raise CatalogDashException('Invalid `xaxis_range`, it is empty!')
-
 
 def get_figure_of_graph_bar_plot_number_of_scenes(df, xaxis_range=[], title=None, animation_frame=None,
                                                   is_scatter_geo=True, sort_ascending=True,

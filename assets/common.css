@@ -16,3 +16,8 @@ body {
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
     color: #acacac;
 }
+
+/* update the date range picker component */
+.DateRangePicker_picker {
+    z-index: 1000;
+}

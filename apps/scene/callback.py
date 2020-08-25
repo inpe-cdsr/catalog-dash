@@ -5,7 +5,7 @@ from datetime import datetime as dt
 from re import split
 
 from app import app
-from modules.exception import CatalogDashException
+# from modules.exception import CatalogDashException
 from modules.logging import logging
 
 from apps.service import __get_date_picker_range_message
@@ -37,11 +37,11 @@ def scene__update_graph_x_number_of_scenes_based_on_date_picker_range(start_date
     start_date = dt.strptime(split('T| ', start_date)[0], '%Y-%m-%d')
     end_date = dt.strptime(split('T| ', end_date)[0], '%Y-%m-%d')
 
-    if start_date is None or start_date < min_start_date:
-        raise CatalogDashException('The inserted start date is less than the minimum possible start date or it is None.')
+    # if start_date is None or start_date < min_start_date:
+    #     raise CatalogDashException('The inserted start date is less than the minimum possible start date or it is None.')
 
-    if end_date is None or end_date > max_end_date:
-        raise CatalogDashException('The inserted end date is greater than the maximum possible end date or it is None.')
+    # if end_date is None or end_date > max_end_date:
+    #     raise CatalogDashException('The inserted end date is greater than the maximum possible end date or it is None.')
 
     # convert the dates from datetime to str again in order to pass the xaxis range to build the figure
     xaxis_range = [start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')]
