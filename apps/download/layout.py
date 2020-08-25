@@ -22,8 +22,8 @@ logging.info('download.layout - df_download.head(): \n%s\n', df_download.head())
 
 
 # get them minimum and maximum dates
-min_start_date = df_download['date'].min()  # min_start_date: 2020-06-29 16:44:46
-max_end_date = df_download['date'].max()  # max_end_date: 2020-08-07 15:30:33
+min_start_date = df_download['date'].min().date()  # min_start_date: 2020-06-29 16:44:46
+max_end_date = df_download['date'].max().date()  # max_end_date: 2020-08-07 15:30:33
 
 logging.info('download.layout - min_start_date: %s', min_start_date)
 logging.info('download.layout - max_end_date: %s', max_end_date)
@@ -32,8 +32,8 @@ logging.info('download.layout - max_end_date: %s', max_end_date)
 # create a df with the information from `df_download`
 data = [
     ['Number of downloaded scenes', len(df_download)],
-    ['Minimum date', min_start_date.date()],
-    ['Maximum date', max_end_date.date()]
+    ['Minimum date', min_start_date],
+    ['Maximum date', max_end_date]
 ]
 df_information = DataFrame(data, columns=['information', 'value'])
 
