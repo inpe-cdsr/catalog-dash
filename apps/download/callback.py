@@ -41,8 +41,8 @@ def download__update_tables_by_date_picker_range_values(start_date, end_date):
     sub_df_d_scene_id = df_d_scene_id_year_month[logical_date_range]
 
     # create a sub dataframe based on start and end dates
-    logical_date_range = __get_logical_date_range(df_d_user_id_scene_id_year_month, xaxis_range)
-    sub_df_d_user_id = df_d_user_id_scene_id_year_month[logical_date_range]
+    logical_date_range = __get_logical_date_range(df_d_user_id_without_location, xaxis_range)
+    sub_df_d_user_id = df_d_user_id_without_location[logical_date_range]
 
     # return the filtered records to each table
     return sub_df_d_scene_id.to_dict('records'), sub_df_d_user_id.to_dict('records')

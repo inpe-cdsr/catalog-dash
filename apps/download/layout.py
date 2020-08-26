@@ -56,12 +56,14 @@ logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_s
 # I group my df by `user_id`, `scene_id` and `year_month` to build the table
 df_d_user_id_scene_id_year_month = filter_df_by(
     df_download,
-    group_by=['user_id', 'scene_id', 'year_month'],
+    group_by=['user_id', 'scene_id', 'year_month', 'longitude', 'latitude'],
     sort_by=['amount', 'year_month', 'user_id', 'scene_id'],
     ascending=False
 )
 
 logging.info('download.layout - df_d_user_id_scene_id_year_month.head(): \n%s\n', df_d_user_id_scene_id_year_month.head())
+
+df_d_user_id_without_location = df_d_user_id_scene_id_year_month[['amount', 'user_id', 'scene_id', 'year_month']]
 
 
 layout = Div([
@@ -176,8 +178,8 @@ layout = Div([
             # table number of download scenes
             DataTable(
                 id='download--table--number-of-downloaded-scenes-by-user_id-scene_id-year_month',
-                columns=[{"name": i, "id": i} for i in df_d_user_id_scene_id_year_month.columns],
-                data=df_d_user_id_scene_id_year_month.to_dict('records'),
+                columns=[{"name": i, "id": i} for i in df_d_user_id_without_location.columns],
+                data=df_d_user_id_without_location.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
