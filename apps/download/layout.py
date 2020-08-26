@@ -53,7 +53,7 @@ df_d_scene_id_year_month = filter_df_by(
 
 logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_scene_id_year_month.head())
 
-# I group my df by `user_id`, `scene_id` and `year_month` to build the table
+# I group my df by `user_id`, `scene_id`, `year_month`, `longitude`, `latitude` to build the graph
 df_d_user_id_scene_id_year_month = filter_df_by(
     df_download,
     group_by=['user_id', 'scene_id', 'year_month', 'longitude', 'latitude'],
@@ -63,6 +63,7 @@ df_d_user_id_scene_id_year_month = filter_df_by(
 
 logging.info('download.layout - df_d_user_id_scene_id_year_month.head(): \n%s\n', df_d_user_id_scene_id_year_month.head())
 
+# remove the 'longitude' and 'latitude' information to build the table
 df_d_user_id_without_location = df_d_user_id_scene_id_year_month[['amount', 'user_id', 'scene_id', 'year_month']]
 
 
@@ -191,5 +192,5 @@ layout = Div([
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
     # download--graph--bubble-map--number-of-downloaded-scenes-by-users
-    # Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
+    Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
 ])

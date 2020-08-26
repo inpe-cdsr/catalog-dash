@@ -2,10 +2,12 @@
 
 from datetime import datetime as dt
 from pandas import set_option
+import plotly.express as px
 
 from modules.exception import CatalogDashException
 from modules.logging import logging
-from modules.utils import get_formatted_date_as_string
+from modules.utils import colors, get_formatted_date_as_string
+
 
 
 # display a larger dataframe on the console
@@ -129,3 +131,75 @@ def __get_date_picker_range_message(start_date, end_date):
         return 'Select a date to see it displayed here'
 
     return message
+
+
+def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=None, color=None,
+                                                      animation_frame=None, is_scatter_geo=True,
+                                                      sort_by=['year_month'], ascending=True):
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes()\n')
+
+    figure_height = 800
+    df_copy = df.copy()
+
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
+
+    # get a sub set from the df according to the selected date range
+    df_copy = df_copy[__get_logical_date_range(df_copy, xaxis_range)]
+
+    # sort by `sort_by`
+    df_copy.sort_values(by=sort_by, ascending=ascending, inplace=True)
+
+    # choose the map type based on the passed flag
+    if is_scatter_geo:
+        # create a figure using `px.scatter_geo`
+        fig = px.scatter_geo(
+            df_copy,
+            title=title,
+            lon='longitude',
+            lat='latitude',
+            color=color,
+            size='amount',
+            hover_data=['year_month'],
+            animation_frame=animation_frame,
+            projection='natural earth',
+            height=figure_height
+        )
+
+        # update the flag
+        fig.update_geos(
+            showcountries=True,
+            bgcolor=colors['background'],
+            showocean=True,
+            oceancolor='#fff'
+        )
+
+        fig.update_layout(
+            plot_bgcolor= colors['background'],
+            paper_bgcolor= colors['background'],
+            font={
+                'color': colors['text']
+            }
+        )
+    else:
+        # create a figure using `px.scatter_mapbox`
+        fig = px.scatter_mapbox(
+            df_copy,
+            title=title,
+            lon='longitude',
+            lat='latitude',
+            color=color,
+            size='amount',
+            hover_data=['year_month'],
+            animation_frame=animation_frame,
+            zoom=2,
+            height=figure_height
+        )
+
+        # add as base map the OSM
+        fig.update_layout(
+            mapbox_style='open-street-map',
+            margin={'t': 40, 'r': 5, 'b': 5, 'l': 5}
+        )
+
+    return fig

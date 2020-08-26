@@ -8,7 +8,8 @@ from app import app
 from modules.logging import logging
 
 from apps.download.layout import *
-from apps.service import __get_logical_date_range, __get_date_picker_range_message
+from apps.service import __get_logical_date_range, __get_date_picker_range_message, \
+                         __get_figure_of_graph_bubble_map_number_of_scenes
 
 
 @app.callback(
@@ -48,18 +49,28 @@ def download__update_tables_by_date_picker_range_values(start_date, end_date):
     return sub_df_d_scene_id.to_dict('records'), sub_df_d_user_id.to_dict('records')
 
 
-# @app.callback(
-#     Output('download--graph--bubble-map--number-of-downloaded-scenes-by-users', 'data'),
-#     [Input('download--date-picker-range', 'start_date'),
-#     Input('download--date-picker-range', 'end_date')])
-# def download__update_charts_by_date_picker_range_values(start_date, end_date):
+@app.callback(
+    Output('download--graph--bubble-map--number-of-downloaded-scenes-by-users', 'figure'),
+    [Input('download--date-picker-range', 'start_date'),
+    Input('download--date-picker-range', 'end_date')])
+def download__update_charts_by_date_picker_range_values(start_date, end_date):
 
-#     logging.info('download__update_charts()\n')
+    logging.info('download__update_charts()\n')
 
-#     logging.info('download__update_charts() - start_date: %s', start_date)
-#     logging.info('download__update_charts() - end_date: %s', end_date)
+    logging.info('download__update_charts() - start_date: %s', start_date)
+    logging.info('download__update_charts() - end_date: %s', end_date)
 
-#     # get just the date from [start|end]_dates
-#     xaxis_range = [start_date.split('T')[0], end_date.split('T')[0]]
+    # get just the date from [start|end]_dates
+    xaxis_range = [start_date.split('T')[0], end_date.split('T')[0]]
 
-#     logging.info('download__update_charts() - xaxis_range: %s\n', xaxis_range)
+    logging.info('download__update_charts() - xaxis_range: %s\n', xaxis_range)
+
+    figure = __get_figure_of_graph_bubble_map_number_of_scenes(
+        df_d_user_id_scene_id_year_month,
+        xaxis_range=xaxis_range,
+        title='Number of Downloaded Scenes by User in a specific location (long/lat)',
+        animation_frame='year_month',
+        color='user_id'
+    )
+
+    return figure
