@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from dash_core_components import Graph, DatePickerRange
-from dash_html_components import Div, P, H1, H3
+from dash_core_components import DatePickerRange, Graph, Loading
+from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
 from pandas import DataFrame
 
-from app import app, url_base_pathname
 from apps.service import filter_df_by, get_table_styles
 from modules.logging import logging
 from modules.model import DatabaseConnection
@@ -192,5 +191,15 @@ layout = Div([
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
     # download--graph--bubble-map--number-of-downloaded-scenes-by-users
-    Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
+    # Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
+
+    # add a loading component during graph loading
+    Loading(
+        id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-users",
+        type="circle",
+        children=[
+            Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
+        ],
+        color=colors['text']
+    )
 ])

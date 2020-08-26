@@ -21,3 +21,8 @@ body {
 .DateRangePicker_picker {
     z-index: 1000;
 }
+
+.dash-sk-circle {
+    width: 60px !important;
+    height: 60px !important;
+}
