@@ -190,16 +190,14 @@ layout = Div([
         ], style={'width': '60%', 'padding': '10px'})
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-    # download--graph--bubble-map--number-of-downloaded-scenes-by-users
-    # Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
-
     # add a loading component during graph loading
     Loading(
         id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-users",
         type="circle",
+        color=colors['text'],
         children=[
+            # download--graph--bubble-map--number-of-downloaded-scenes-by-users
             Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
-        ],
-        color=colors['text']
+        ]
     )
 ])

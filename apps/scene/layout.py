@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from dash_core_components import Graph, DatePickerRange
-from dash_html_components import Div, P, H1, H3
+from dash_core_components import DatePickerRange, Graph, Loading
+from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
 from pandas import read_csv, to_datetime, DataFrame
 
-from app import app, url_base_pathname
 from apps.service import filter_df_by, get_table_styles
 from modules.environment import IS_TO_USE_DATA_FROM_DB
 from modules.logging import logging
@@ -168,12 +167,20 @@ layout = Div([
         ], style={'width': '50%', 'padding': '10px'}),
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-    # scene--graph--bar-plot--number-of-scenes
-    Graph(id='scene--graph--bar-plot--number-of-scenes'),
+    # add a loading component during graph loading
+    Loading(
+        id="scene--loading--graph--bubble-map--number-of-scenes",
+        type="circle",
+        color=colors['text'],
+        children=[
+            # scene--graph--bar-plot--number-of-scenes
+            Graph(id='scene--graph--bar-plot--number-of-scenes'),
 
-    # scene--graph--bubble-map--number-of-scenes--with-animation-frame
-    Graph(id='scene--graph--bubble-map--number-of-scenes--with-animation-frame'),
+            # scene--graph--bubble-map--number-of-scenes--with-animation-frame
+            Graph(id='scene--graph--bubble-map--number-of-scenes--with-animation-frame'),
 
-    # graph--bubble-map--number-of-scenes--without-animation-frame
-    # Graph(id='graph--bubble-map--number-of-scenes--without-animation-frame')
+            # graph--bubble-map--number-of-scenes--without-animation-frame
+            # Graph(id='graph--bubble-map--number-of-scenes--without-animation-frame')
+        ]
+    )
 ])
