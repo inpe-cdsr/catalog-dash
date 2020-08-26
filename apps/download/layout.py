@@ -18,7 +18,10 @@ db = DatabaseConnection()
 # create the download dataframe from the Download table in the database
 df_download = db.select_from_download()
 
-logging.info('download.layout - df_download.head(): \n%s\n', df_download.head())
+logging.info(
+    'download.layout - df_download.head(): \n%s\n',
+    df_download.head()[['id', 'user_id', 'scene_id', 'date', 'longitude', 'latitude', 'path']]
+)
 
 
 # get them minimum and maximum dates
@@ -183,5 +186,8 @@ layout = Div([
                 page_size=50,
             ),
         ], style={'width': '60%', 'padding': '10px'})
-    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'})
+    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+
+    # download--graph--bubble-map--number-of-downloaded-scenes-by-users
+    # Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
 ])

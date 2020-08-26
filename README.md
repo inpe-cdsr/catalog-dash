@@ -53,11 +53,11 @@ Build image:
 
 ```
 $ docker build -t inpe-cdsr-catalog-dash -f Dockerfile . --no-cache
-$ docker build -t registry.dpi.inpe.br/inpe-cdsr/catalog-dash:0.0.6 -f Dockerfile . --no-cache
+$ docker build -t registry.dpi.inpe.br/inpe-cdsr/catalog-dash:0.0.7 -f Dockerfile . --no-cache
 ```
 
 Push image to registry:
 
 ```
-$ docker push registry.dpi.inpe.br/inpe-cdsr/catalog-dash:0.0.6
+$ docker push registry.dpi.inpe.br/inpe-cdsr/catalog-dash:0.0.7
 ```
