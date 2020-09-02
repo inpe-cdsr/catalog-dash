@@ -96,8 +96,9 @@ layout = Div([
                 'color': colors['text']
             }
         ),
-        # table information
+        # table information and date picker range
         Div([
+            # table information
             Div([
                 DataTable(
                     id='table--information',
@@ -107,37 +108,39 @@ layout = Div([
                     **get_table_styles()
                 ),
             ], style={'max-width': '400px'}),
-        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-
-        # Select the start and end date to organize the tables and charts
-        P(
-            children='Select the start and end date to organize the tables and charts:',
-            style={
-                'textAlign': 'center',
-                'color': colors['text'],
-                'margin-top': '20px'
-            }
-        ),
-        # date picker range
-        Div([
+            # date picker range
             Div([
-                DatePickerRange(
-                    id='download--date-picker-range',
-                    display_format='DD/MM/YYYY',
-                    min_date_allowed=min_start_date,
-                    max_date_allowed=max_end_date,
-                    start_date=min_start_date,
-                    end_date=max_end_date
-                )
-            ], style={'padding-right': '10px'}),
-            P(
-                id='download--output-container-date-picker-range',
-                style={
-                    'textAlign': 'center',
-                    'color': colors['text'],
-                    'margin-top': '5px'
-                }
-            ),
+                # Select the start and end date to filter the tables and charts
+                P(
+                    children='Select the start and end date to filter the tables and charts:',
+                    style={
+                        'textAlign': 'center',
+                        'color': colors['text'],
+                        'margin-top': '20px'
+                    }
+                ),
+                # date picker range
+                Div([
+                    Div([
+                        DatePickerRange(
+                            id='download--date-picker-range',
+                            display_format='DD/MM/YYYY',
+                            min_date_allowed=min_start_date,
+                            max_date_allowed=max_end_date,
+                            start_date=min_start_date,
+                            end_date=max_end_date
+                        )
+                    ], style={'padding-right': '10px'}),
+                    P(
+                        id='download--output-container-date-picker-range',
+                        style={
+                            'textAlign': 'center',
+                            'color': colors['text'],
+                            'margin-top': '5px'
+                        }
+                    ),
+                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+            ], style={'padding': '10px'}),
         ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     ], style={'padding': '10px'}),
 
