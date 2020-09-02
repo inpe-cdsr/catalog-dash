@@ -94,16 +94,7 @@ class DatabaseConnection():
         return df
 
     def select_from_download(self):
-        df = self.execute('''
-            SELECT d.id, d.user_id, d.scene_id, d.path, d.date, l.*
-            FROM (
-                SELECT id, userId as user_id, sceneId as scene_id, path, ip, date
-                FROM Download
-            ) d
-            LEFT JOIN
-                Location l
-            ON d.ip = l.ip;
-        ''')
+        df = self.execute('SELECT * FROM dash_download;')
 
         # convert from `str` to a `datetime` type
         df['date'] = to_datetime(df['date'])

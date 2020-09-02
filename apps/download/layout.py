@@ -21,7 +21,7 @@ df_download['date'] = df_download['date'].dt.date
 
 logging.info(
     'download.layout - df_download.head(): \n%s\n',
-    df_download.head()[['id', 'user_id', 'scene_id', 'date', 'longitude', 'latitude', 'path']]
+    df_download.head()[['id', 'email', 'scene_id', 'date', 'longitude', 'latitude', 'path']]
 )
 
 
@@ -54,18 +54,18 @@ df_d_scene_id_date = filter_df_by(
 
 logging.info('download.layout - df_d_scene_id_date.head(): \n%s\n', df_d_scene_id_date.head())
 
-# I group my df by `user_id`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
-df_d_user_id_scene_id_date = filter_df_by(
+# I group my df by `email`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
+df_d_email_scene_id_date = filter_df_by(
     df_download,
-    group_by=['user_id', 'scene_id', 'date', 'longitude', 'latitude'],
-    sort_by=['amount', 'date', 'user_id', 'scene_id'],
+    group_by=['email', 'scene_id', 'date', 'longitude', 'latitude'],
+    sort_by=['amount', 'date', 'email', 'scene_id'],
     ascending=False
 )
 
-logging.info('download.layout - df_d_user_id_scene_id_date.head(): \n%s\n', df_d_user_id_scene_id_date.head())
+logging.info('download.layout - df_d_email_scene_id_date.head(): \n%s\n', df_d_email_scene_id_date.head())
 
 # remove the 'longitude' and 'latitude' information to build the table
-df_d_user_id_without_location = df_d_user_id_scene_id_date[['amount', 'user_id', 'scene_id', 'date']]
+df_d_email_without_location = df_d_email_scene_id_date[['amount', 'email', 'scene_id', 'date']]
 
 
 layout = Div([
@@ -171,7 +171,7 @@ layout = Div([
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by user_id, scene_id and date',
+                children='Table: Number of Downloaded Scenes by email, scene_id and date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -179,9 +179,9 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='download--table--number-of-downloaded-scenes-by-user_id-scene_id-date',
-                columns=[{"name": i, "id": i} for i in df_d_user_id_without_location.columns],
-                data=df_d_user_id_without_location.to_dict('records'),
+                id='download--table--number-of-downloaded-scenes-by-email-scene_id-date',
+                columns=[{"name": i, "id": i} for i in df_d_email_without_location.columns],
+                data=df_d_email_without_location.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
