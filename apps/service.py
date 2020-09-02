@@ -72,26 +72,20 @@ def extra_logging(df):
 '''
 
 def filter_df_by(df, group_by=['dataset', 'year_month'], sort_by=None, ascending=True):
-    # create a copy from the original df
-    df_copy = df.copy()
-
-    # extract year_month from my date
-    df_copy['year_month'] = df_copy['date'].map(lambda date: date.strftime('%Y-%m'))
-
     # group the df by `group_by` and count how many scenes are
-    df_copy = df_copy.groupby(group_by)['scene_id'].count().to_frame('amount').reset_index()
+    df = df.groupby(group_by)['scene_id'].count().to_frame('amount').reset_index()
 
     # if someone passes `sort_by` parameter, then I sort the values by it
     if sort_by:
-        df_copy = df_copy.sort_values(sort_by, ascending=ascending)
+        df = df.sort_values(sort_by, ascending=ascending)
 
     # I get the last column (i.e. 'amount') and I add it to the beginning
     # Source: https://stackoverflow.com/a/13148611
-    columns = df_copy.columns.tolist()
+    columns = df.columns.tolist()
     columns = columns[-1:] + columns[:-1]
-    df_copy = df_copy[columns]
+    df = df[columns]
 
-    return df_copy
+    return df
 
 
 ##################################################
@@ -133,25 +127,21 @@ def __get_date_picker_range_message(start_date, end_date):
     return message
 
 
-def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=None, color=None,
-                                                      animation_frame=None, is_scatter_geo=True,
-                                                      sort_by=['year_month'], ascending=True):
-    logging.info('get_figure_of_graph_bubble_map_number_of_scenes()\n')
+def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascending=True,
+                                                      plot_type='scatter_geo', title=None, color=None,
+                                                      animation_frame=None, hover_data=None):
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes()')
 
     figure_height = 800
     df_copy = df.copy()
 
-    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
-    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - xaxis_range: %s\n', xaxis_range)
-
-    # get a sub set from the df according to the selected date range
-    df_copy = df_copy[__get_logical_date_range(df_copy, xaxis_range)]
-
     # sort by `sort_by`
     df_copy.sort_values(by=sort_by, ascending=ascending, inplace=True)
 
+    logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
+
     # choose the map type based on the passed flag
-    if is_scatter_geo:
+    if plot_type == 'scatter_geo':
         # create a figure using `px.scatter_geo`
         fig = px.scatter_geo(
             df_copy,
@@ -160,7 +150,7 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=
             lat='latitude',
             color=color,
             size='amount',
-            hover_data=['year_month'],
+            hover_data=hover_data,
             animation_frame=animation_frame,
             projection='natural earth',
             height=figure_height
@@ -181,7 +171,8 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=
                 'color': colors['text']
             }
         )
-    else:
+
+    elif plot_type == 'scatter_mapbox':
         # create a figure using `px.scatter_mapbox`
         fig = px.scatter_mapbox(
             df_copy,
@@ -190,7 +181,7 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=
             lat='latitude',
             color=color,
             size='amount',
-            hover_data=['year_month'],
+            hover_data=hover_data,
             animation_frame=animation_frame,
             zoom=2,
             height=figure_height
@@ -201,5 +192,8 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, xaxis_range=[], title=
             mapbox_style='open-street-map',
             margin={'t': 40, 'r': 5, 'b': 5, 'l': 5}
         )
+
+    else:
+        raise CatalogDashException('Invalid `plot_type`={}'.format(plot_type))
 
     return fig

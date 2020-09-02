@@ -2,13 +2,12 @@
 
 from dash.dependencies import Input, Output
 from datetime import datetime as dt
-from re import split
 
 from app import app
 from modules.logging import logging
 
 from apps.download.layout import *
-from apps.service import __get_logical_date_range, __get_date_picker_range_message, \
+from apps.service import __get_date_picker_range_message, \
                          __get_figure_of_graph_bubble_map_number_of_scenes
 
 
@@ -21,29 +20,29 @@ def download__update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    [Output('download--table--number-of-downloaded-scenes-by-scene_id-year_month', 'data'),
-    Output('download--table--number-of-downloaded-scenes-by-user_id-scene_id-year_month', 'data')],
+    [Output('download--table--number-of-downloaded-scenes-by-scene_id-date', 'data'),
+    Output('download--table--number-of-downloaded-scenes-by-user_id-scene_id-date', 'data')],
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date')])
 def download__update_tables_by_date_picker_range_values(start_date, end_date):
-
     logging.info('download__update_tables()\n')
 
     logging.info('download__update_tables() - start_date: %s', start_date)
     logging.info('download__update_tables() - end_date: %s', end_date)
 
-    # get just the date from [start|end]_dates
-    xaxis_range = [start_date.split('T')[0], end_date.split('T')[0]]
-
-    logging.info('download__update_tables() - xaxis_range: %s\n', xaxis_range)
-
-    # create a sub dataframe based on start and end dates
-    logical_date_range = __get_logical_date_range(df_d_scene_id_year_month, xaxis_range)
-    sub_df_d_scene_id = df_d_scene_id_year_month[logical_date_range]
+    # convert the [start|end]_date from str to date
+    start_date = dt.strptime(start_date.split('T')[0], '%Y-%m-%d').date()
+    end_date = dt.strptime(end_date.split('T')[0], '%Y-%m-%d').date()
 
     # create a sub dataframe based on start and end dates
-    logical_date_range = __get_logical_date_range(df_d_user_id_without_location, xaxis_range)
-    sub_df_d_user_id = df_d_user_id_without_location[logical_date_range]
+    sub_df_d_scene_id = df_d_scene_id_date[
+        ((df_d_scene_id_date['date'] >= start_date) & (df_d_scene_id_date['date'] <= end_date))
+    ]
+
+    # create a sub dataframe based on start and end dates
+    sub_df_d_user_id = df_d_user_id_without_location[
+        ((df_d_user_id_without_location['date'] >= start_date) & (df_d_user_id_without_location['date'] <= end_date))
+    ]
 
     # return the filtered records to each table
     return sub_df_d_scene_id.to_dict('records'), sub_df_d_user_id.to_dict('records')
@@ -54,23 +53,29 @@ def download__update_tables_by_date_picker_range_values(start_date, end_date):
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date')])
 def download__update_charts_by_date_picker_range_values(start_date, end_date):
-
     logging.info('download__update_charts()\n')
 
     logging.info('download__update_charts() - start_date: %s', start_date)
     logging.info('download__update_charts() - end_date: %s', end_date)
 
-    # get just the date from [start|end]_dates
-    xaxis_range = [start_date.split('T')[0], end_date.split('T')[0]]
+    # convert the [start|end]_date from str to date
+    start_date = dt.strptime(start_date.split('T')[0], '%Y-%m-%d').date()
+    end_date = dt.strptime(end_date.split('T')[0], '%Y-%m-%d').date()
 
-    logging.info('download__update_charts() - xaxis_range: %s\n', xaxis_range)
+    # get a sub set from the df according to the selected date range
+    df_copy = df_d_user_id_scene_id_date[
+        ((df_d_user_id_scene_id_date['date'] >= start_date) & (df_d_user_id_scene_id_date['date'] <= end_date))
+    ]
+
+    df_copy['date'] = df_copy['date'].astype(str)
 
     figure = __get_figure_of_graph_bubble_map_number_of_scenes(
-        df_d_user_id_scene_id_year_month,
-        xaxis_range=xaxis_range,
+        df_copy,
+        sort_by=['date'],
         title='Number of Downloaded Scenes by User in a specific location (long/lat)',
-        animation_frame='year_month',
-        color='user_id'
+        color='user_id',
+        # animation_frame='date',
+        hover_data=['date']
     )
 
     return figure

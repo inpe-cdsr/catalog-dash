@@ -10,6 +10,20 @@ from modules.utils import colors
 
 
 ##################################################
+# layout services
+##################################################
+
+def copy_and_organize_df(df):
+    # create a copy from the original df
+    df_copy = df.copy()
+
+    # extract year_month from my date
+    df_copy['year_month'] = df_copy['date'].map(lambda date: date.strftime('%Y-%m'))
+
+    return df_copy
+
+
+##################################################
 # callback services
 ##################################################
 

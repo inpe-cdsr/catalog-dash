@@ -17,15 +17,17 @@ db = DatabaseConnection()
 # create the download dataframe from the Download table in the database
 df_download = db.select_from_download()
 
+df_download['date'] = df_download['date'].dt.date
+
 logging.info(
     'download.layout - df_download.head(): \n%s\n',
     df_download.head()[['id', 'user_id', 'scene_id', 'date', 'longitude', 'latitude', 'path']]
 )
 
 
-# get them minimum and maximum dates
-min_start_date = df_download['date'].min().date()  # min_start_date: 2020-06-29 16:44:46
-max_end_date = df_download['date'].max().date()  # max_end_date: 2020-08-07 15:30:33
+# get the minimum and maximum dates
+min_start_date = df_download['date'].min()
+max_end_date = df_download['date'].max()
 
 logging.info('download.layout - min_start_date: %s', min_start_date)
 logging.info('download.layout - max_end_date: %s', max_end_date)
@@ -42,28 +44,28 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
 
-# I group my df by `scene_id` and `year_month` to build the table
-df_d_scene_id_year_month = filter_df_by(
+# I group my df by `scene_id` and `date` to build the table
+df_d_scene_id_date = filter_df_by(
     df_download,
-    group_by=['scene_id', 'year_month'],
-    sort_by=['amount', 'year_month', 'scene_id'],
+    group_by=['scene_id', 'date'],
+    sort_by=['amount', 'date', 'scene_id'],
     ascending=False
 )
 
-logging.info('download.layout - df_d_scene_id_year_month.head(): \n%s\n', df_d_scene_id_year_month.head())
+logging.info('download.layout - df_d_scene_id_date.head(): \n%s\n', df_d_scene_id_date.head())
 
-# I group my df by `user_id`, `scene_id`, `year_month`, `longitude`, `latitude` to build the graph
-df_d_user_id_scene_id_year_month = filter_df_by(
+# I group my df by `user_id`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
+df_d_user_id_scene_id_date = filter_df_by(
     df_download,
-    group_by=['user_id', 'scene_id', 'year_month', 'longitude', 'latitude'],
-    sort_by=['amount', 'year_month', 'user_id', 'scene_id'],
+    group_by=['user_id', 'scene_id', 'date', 'longitude', 'latitude'],
+    sort_by=['amount', 'date', 'user_id', 'scene_id'],
     ascending=False
 )
 
-logging.info('download.layout - df_d_user_id_scene_id_year_month.head(): \n%s\n', df_d_user_id_scene_id_year_month.head())
+logging.info('download.layout - df_d_user_id_scene_id_date.head(): \n%s\n', df_d_user_id_scene_id_date.head())
 
 # remove the 'longitude' and 'latitude' information to build the table
-df_d_user_id_without_location = df_d_user_id_scene_id_year_month[['amount', 'user_id', 'scene_id', 'year_month']]
+df_d_user_id_without_location = df_d_user_id_scene_id_date[['amount', 'user_id', 'scene_id', 'date']]
 
 
 layout = Div([
@@ -145,7 +147,7 @@ layout = Div([
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by scene_id and year_month',
+                children='Table: Number of Downloaded Scenes by scene_id and date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -153,9 +155,9 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='download--table--number-of-downloaded-scenes-by-scene_id-year_month',
-                columns=[{"name": i, "id": i} for i in df_d_scene_id_year_month.columns],
-                data=df_d_scene_id_year_month.to_dict('records'),
+                id='download--table--number-of-downloaded-scenes-by-scene_id-date',
+                columns=[{"name": i, "id": i} for i in df_d_scene_id_date.columns],
+                data=df_d_scene_id_date.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
@@ -169,7 +171,7 @@ layout = Div([
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by user_id, scene_id and year_month',
+                children='Table: Number of Downloaded Scenes by user_id, scene_id and date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -177,7 +179,7 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='download--table--number-of-downloaded-scenes-by-user_id-scene_id-year_month',
+                id='download--table--number-of-downloaded-scenes-by-user_id-scene_id-date',
                 columns=[{"name": i, "id": i} for i in df_d_user_id_without_location.columns],
                 data=df_d_user_id_without_location.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },

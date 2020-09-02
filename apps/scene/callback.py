@@ -8,7 +8,8 @@ from app import app
 from modules.logging import logging
 
 from apps.service import __get_date_picker_range_message, \
-                         __get_figure_of_graph_bubble_map_number_of_scenes
+                         __get_figure_of_graph_bubble_map_number_of_scenes, \
+                         __get_logical_date_range
 from apps.scene.layout import *
 from apps.scene.service import get_figure_of_graph_bar_plot_number_of_scenes
 
@@ -47,13 +48,18 @@ def scene__update_graph_x_number_of_scenes_based_on_date_picker_range(start_date
         title='Number of Scenes by Dataset'
     )
 
+    # get a sub set from the df according to the selected date range
+    df_copy = df_sd_ds_ym_long_lat[
+        __get_logical_date_range(df_sd_ds_ym_long_lat, xaxis_range)
+    ]
+
     figure_02 = __get_figure_of_graph_bubble_map_number_of_scenes(
-        df_sd_ds_ym_long_lat,
-        xaxis_range=xaxis_range,
-        title='Number of Scenes by Dataset in a specific location (long/lat)',
-        animation_frame='year_month',
+        df_copy,
         sort_by=['year_month', 'dataset'],
-        color='dataset'
+        title='Number of Scenes by Dataset in a specific location (long/lat)',
+        color='dataset',
+        # animation_frame='year_month',
+        hover_data=['year_month']
     )
 
     return figure_01, figure_02

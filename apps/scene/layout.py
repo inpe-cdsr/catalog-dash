@@ -5,11 +5,13 @@ from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
 from pandas import read_csv, to_datetime, DataFrame
 
+from apps.scene.service import copy_and_organize_df
 from apps.service import filter_df_by, get_table_styles
 from modules.environment import IS_TO_USE_DATA_FROM_DB
 from modules.logging import logging
 from modules.model import DatabaseConnection
 from modules.utils import colors
+
 
 
 if IS_TO_USE_DATA_FROM_DB:
@@ -52,9 +54,11 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('scene.layout - df_information.head(): \n%s\n', df_information.head())
 
 
+df_sd_dataset_year_month = copy_and_organize_df(df_scene_dataset)
+
 # I group my df by 'dataset' and 'year_month' to build the table
 df_sd_dataset_year_month = filter_df_by(
-    df_scene_dataset,
+    df_sd_dataset_year_month,
     group_by=['dataset', 'year_month'],
     sort_by=['year_month', 'dataset'],
     ascending=False
@@ -63,9 +67,11 @@ df_sd_dataset_year_month = filter_df_by(
 logging.info('scene.layout - df_sd_dataset_year_month.head(): \n%s\n', df_sd_dataset_year_month.head())
 
 
+df_sd_ds_ym_long_lat = copy_and_organize_df(df_scene_dataset)
+
 # I group my df by 'dataset', 'year_month', longitude' and 'latitude' to build the map
 df_sd_ds_ym_long_lat = filter_df_by(
-    df_scene_dataset,
+    df_sd_ds_ym_long_lat,
     group_by=['dataset', 'year_month', 'longitude', 'latitude'],
     sort_by=['year_month', 'dataset', 'longitude', 'latitude']
 )
