@@ -24,7 +24,7 @@ def get_table_styles():
     return {
         'style_as_list_view': True,
         'style_table': {
-            'maxHeight': '300px',
+            'maxHeight': '390px',
             'overflowY': 'scroll'
         },
         'style_data_conditional': [

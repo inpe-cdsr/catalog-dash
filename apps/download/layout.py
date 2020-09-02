@@ -106,7 +106,7 @@ layout = Div([
                     fixed_rows={ 'headers': True, 'data': 0 },
                     **get_table_styles()
                 ),
-            ], style={'max-width': '500px'}),
+            ], style={'max-width': '400px'}),
         ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
         # Select the start and end date to organize the tables and charts
