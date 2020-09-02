@@ -140,7 +140,6 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascendin
 
     logging.info('get_figure_of_graph_bubble_map_number_of_scenes() - df_copy.head(): \n%s\n', df_copy.head())
 
-    # choose the map type based on the passed flag
     if plot_type == 'scatter_geo':
         # create a figure using `px.scatter_geo`
         fig = px.scatter_geo(
