@@ -20,13 +20,13 @@ $ pyenv install 3.7.4
 Create a Python environment with the Python version above through pyenv-virtualenv:
 
 ```
-$ pyenv virtualenv 3.7.4 catalog-dash
+$ pyenv virtualenv 3.7.4 inpe-cdsr-catalog-dash
 ```
 
 Activate the environment:
 
 ```
-$ pyenv activate catalog-dash
+$ pyenv activate inpe-cdsr-catalog-dash
 ```
 
 Install the requirements:
@@ -41,7 +41,7 @@ $ pip install -r requirements.txt
 Run the application:
 
 ```
-$ pyenv activate catalog-dash
+$ pyenv activate inpe-cdsr-catalog-dash
 $ set -a && source catalog_dash.env && set +a
 $ python main.py
 ```
