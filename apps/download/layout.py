@@ -3,6 +3,7 @@
 from dash_core_components import DatePickerRange, Graph, Loading
 from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
+from datetime import timedelta
 from pandas import DataFrame
 
 from apps.service import filter_df_by, get_table_styles
@@ -88,18 +89,19 @@ layout = Div([
 
     # information table
     Div([
-        # title
-        P(
-            children='Table: Information',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
         # table information and date picker range
         Div([
             # table information
             Div([
+                # title
+                P(
+                    children='Table: Information',
+                    style={
+                        'textAlign': 'center',
+                        'color': colors['text']
+                    }
+                ),
+                # table information
                 DataTable(
                     id='table--information',
                     columns=[{"name": i, "id": i} for i in df_information.columns],
@@ -128,7 +130,7 @@ layout = Div([
                             min_date_allowed=min_start_date,
                             max_date_allowed=max_end_date,
                             start_date=min_start_date,
-                            end_date=max_end_date
+                            end_date=min_start_date + timedelta(days=7)
                         )
                     ], style={'padding-right': '10px'}),
                     P(

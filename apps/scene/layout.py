@@ -3,6 +3,7 @@
 from dash_core_components import DatePickerRange, Graph, Loading
 from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
+from dateutil.relativedelta import relativedelta
 from pandas import read_csv, to_datetime, DataFrame
 
 from apps.scene.service import copy_and_organize_df
@@ -25,6 +26,7 @@ else:
     df_scene_dataset = read_csv('data/scene_dataset.csv')
     df_scene_dataset['date'] = to_datetime(df_scene_dataset['date'])
 
+df_scene_dataset['date'] = df_scene_dataset['date'].dt.date
 
 logging.info('scene.layout - df_scene_dataset.head(): \n%s\n', df_scene_dataset.head())
 # logging.info('scene.layout - df_scene_dataset.shape: %s\n', df_scene_dataset.shape)
@@ -34,9 +36,9 @@ logging.info('scene.layout - df_scene_dataset.head(): \n%s\n', df_scene_dataset.
 # extra_logging(df_scene_dataset)
 
 
-# get them minimum and maximum dates
-min_start_date = df_scene_dataset['date'].min()  # min_start_date: 2016-05-01 00:00:00
-max_end_date = df_scene_dataset['date'].max()  # max_end_date: 2020-03-03 00:00:00
+# get the minimum and maximum dates
+min_start_date = df_scene_dataset['date'].min()
+max_end_date = df_scene_dataset['date'].max()
 
 logging.info('scene.layout - min_start_date: %s', min_start_date)
 logging.info('scene.layout - max_end_date: %s', max_end_date)
@@ -46,8 +48,8 @@ logging.info('scene.layout - max_end_date: %s', max_end_date)
 data = [
     ['Number of available datasets', len(df_scene_dataset.dataset.unique())],
     ['Number of scenes', len(df_scene_dataset)],
-    ['Minimum date', min_start_date.date()],
-    ['Maximum date', max_end_date.date()]
+    ['Minimum date', min_start_date],
+    ['Maximum date', max_end_date]
 ]
 df_information = DataFrame(data, columns=['information', 'value'])
 
@@ -159,7 +161,7 @@ layout = Div([
                     min_date_allowed=min_start_date,
                     max_date_allowed=max_end_date,
                     start_date=min_start_date,
-                    end_date=max_end_date
+                    end_date=min_start_date + relativedelta(years=1)
                 )
             ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
             P(
