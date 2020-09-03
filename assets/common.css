@@ -8,11 +8,6 @@ body {
     color: white;
 }
 
-.dash-table-container .previous-next-container input.current-page {
-    width: 50px !important;
-    font-size: 15px !important;
-}
-
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
     color: #acacac;
 }
