@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from dash_core_components import DatePickerRange, Graph, Loading
+from dash_core_components import DatePickerRange, Graph, Input as dcc_Input, Loading
 from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
 from datetime import timedelta
@@ -89,7 +89,7 @@ layout = Div([
 
     # information table
     Div([
-        # table information and date picker range
+        # table information, date picker range and limit
         Div([
             # table information
             Div([
@@ -123,16 +123,20 @@ layout = Div([
                 ),
                 # date picker range
                 Div([
-                    Div([
-                        DatePickerRange(
-                            id='download--date-picker-range',
-                            display_format='DD/MM/YYYY',
-                            min_date_allowed=min_start_date,
-                            max_date_allowed=max_end_date,
-                            start_date=min_start_date,
-                            end_date=min_start_date + timedelta(days=7)
-                        )
-                    ], style={'padding-right': '10px'}),
+                    DatePickerRange(
+                        id='download--date-picker-range',
+                        display_format='DD/MM/YYYY',
+                        min_date_allowed=min_start_date,
+                        max_date_allowed=max_end_date,
+                        start_date=min_start_date,
+                        end_date=min_start_date + timedelta(days=7)
+                    )
+                ], style={
+                    'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center',
+                    'padding-right': '10px'
+                }),
+                # date picker range output
+                Div([
                     P(
                         id='download--output-container-date-picker-range',
                         style={
@@ -142,6 +146,27 @@ layout = Div([
                         }
                     ),
                 ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+            ], style={'padding': '10px'}),
+            # limit
+            Div([
+                # limit
+                P(
+                    children='Limit (max. 3000):',
+                    style={
+                        'textAlign': 'center',
+                        'color': colors['text'],
+                        'margin-top': '20px'
+                    }
+                ),
+                # date picker range
+                dcc_Input(
+                    id="download--input--limit",
+                    type="number",
+                    placeholder="Limit (max. 3000)",
+                    value=100,
+                    min=1,
+                    max=3000
+                )
             ], style={'padding': '10px'}),
         ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     ], style={'padding': '10px'}),
