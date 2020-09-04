@@ -164,11 +164,9 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascendin
         )
 
         fig.update_layout(
-            plot_bgcolor= colors['background'],
-            paper_bgcolor= colors['background'],
-            font={
-                'color': colors['text']
-            }
+            plot_bgcolor=colors['background'],
+            paper_bgcolor=colors['background'],
+            font={'color': colors['text']}
         )
 
     elif plot_type == 'scatter_mapbox':
@@ -189,7 +187,9 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascendin
         # add as base map the OSM
         fig.update_layout(
             mapbox_style='open-street-map',
-            margin={'t': 40, 'r': 5, 'b': 5, 'l': 5}
+            margin={'t': 40, 'r': 5, 'b': 5, 'l': 5},
+            paper_bgcolor= colors['background'],
+            font={'color': colors['text']}
         )
 
     else:

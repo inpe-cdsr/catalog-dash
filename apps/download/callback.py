@@ -104,7 +104,8 @@ def download__update_charts_by_date_picker_range_values(start_date, end_date, li
         title='Number of Downloaded Scenes by User in a specific location (long/lat)',
         color='email',
         # animation_frame='date',
-        hover_data=['date']
+        hover_data=['date'],
+        plot_type='scatter_mapbox'
     )
 
     return figure
