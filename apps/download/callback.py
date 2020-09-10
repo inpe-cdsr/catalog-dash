@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from dash.dependencies import Input, Output
 from datetime import datetime as dt
+from json import loads
+
+from dash.dependencies import Input, Output
+from dash.development.base_component import Component
 
 from app import app
 from modules.logging import logging
 
 from apps.download.layout import *
+from apps.download.service import __create_sub_df_based_on_parameters, __get_geojson_data, \
+                                  color_prop, get_minmax_from_df
 from apps.service import __get_date_picker_range_message, \
                          __get_figure_of_graph_bubble_map_number_of_scenes
+
+
+minmax = get_minmax_from_df(df_d_email_scene_id_date)
 
 
 @app.callback(
@@ -80,28 +88,14 @@ def download__update_charts_by_date_picker_range_values(start_date, end_date, li
     if limit is None:
         return {"data": [], "layout": {}, "frames": []}
 
-    # convert the [start|end]_date from str to date
-    start_date = dt.strptime(start_date.split('T')[0], '%Y-%m-%d').date()
-    end_date = dt.strptime(end_date.split('T')[0], '%Y-%m-%d').date()
-
-    # get a sub set from the df according to the selected date range
-    df_copy = df_d_email_scene_id_date[
-        ((df_d_email_scene_id_date['date'] >= start_date) & (df_d_email_scene_id_date['date'] <= end_date))
-    ]
-
-    # reset the indexes to avoid the pandas warning related to SettingWithCopyWarning
-    df_copy.reset_index(drop=True, inplace=True)
-
-    # return the elements based on the limit, if it is possible
-    if limit > 0 and limit < len(df_copy.index):
-        df_copy = df_copy.iloc[:limit]
-
-    df_copy['date'] = df_copy['date'].astype(str)
+    sub_df = __create_sub_df_based_on_parameters(
+        df_d_email_scene_id_date, start_date, end_date, limit
+    )
 
     figure = __get_figure_of_graph_bubble_map_number_of_scenes(
-        df_copy,
+        sub_df,
         sort_by=['date'],
-        title='Number of Downloaded Scenes by User in a specific location (long/lat)',
+        title='Graph - Number of Downloaded Scenes by User in a specific location (long/lat)',
         color='email',
         # animation_frame='date',
         hover_data=['date'],
@@ -109,3 +103,45 @@ def download__update_charts_by_date_picker_range_values(start_date, end_date, li
     )
 
     return figure
+
+
+@app.callback(
+    Output('download--map--number-of-downloaded-scenes-by-users', 'data'),
+    [Input('download--date-picker-range', 'start_date'),
+    Input('download--date-picker-range', 'end_date'),
+    Input('download--input--limit', 'value')])
+def download__update_map_by_date_picker_range_values(start_date, end_date, limit):
+    logging.info('download__update_maps()')
+
+    logging.info('download__update_maps() - start_date: %s', start_date)
+    logging.info('download__update_maps() - end_date: %s', end_date)
+    logging.info('download__update_maps() - limit: %s', limit)
+
+    # if limit is None, then the callback returns an empty map
+    if limit is None:
+        return Component.UNDEFINED
+
+    sub_df = __create_sub_df_based_on_parameters(
+        df_d_email_scene_id_date, start_date, end_date, limit
+    )
+
+    # build the geojson object with a list of markers
+    geojson = __get_geojson_data(sub_df)
+
+    return geojson
+
+
+@app.callback(
+    [Output("download--map--number-of-downloaded-scenes-by-users", "hideout"),
+    Output("download--map--colorbar", "colorscale"),
+    Output("download--map--colorbar", "min"),
+    Output("download--map--colorbar", "max")],
+    [Input("download--map--dropdown--color-scale", "value")])
+def download__update_map_colorbar(csc):
+    csc = loads(csc)
+    hideout = {
+        'colorscale': csc,
+        'color_prop': color_prop,
+        **minmax
+    }
+    return hideout, csc, minmax["min"], minmax["max"]

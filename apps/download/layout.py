@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from dash_core_components import DatePickerRange, Graph, Input as dcc_Input, Loading
+from json import dumps
+from datetime import timedelta
+
+from dash_core_components import DatePickerRange, Dropdown, Graph, Input as dcc_Input, Loading
 from dash_html_components import Div, H1, H3, P
 from dash_table import DataTable
-from datetime import timedelta
+from dash_leaflet import Colorbar, GeoJSON, Map, TileLayer
+from dash_leaflet.express import scatter
+from numpy import log as np_log
 from pandas import DataFrame
 
+from apps.download.service import default_csc, color_prop, csc_map, csc_options, get_minmax_from_df
 from apps.service import filter_df_by, get_table_styles
 from modules.logging import logging
 from modules.model import DatabaseConnection
@@ -67,6 +73,9 @@ logging.info('download.layout - df_d_email_scene_id_date.head(): \n%s\n', df_d_e
 
 # remove the 'longitude' and 'latitude' information to build the table
 df_d_email_without_location = df_d_email_scene_id_date[['amount', 'email', 'scene_id', 'date']]
+
+
+minmax = get_minmax_from_df(df_d_email_scene_id_date)
 
 
 layout = Div([
@@ -222,7 +231,76 @@ layout = Div([
         ], style={'width': '60%', 'padding': '10px'})
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
-    # add a loading component during graph loading
+    # map
+    Loading(
+        id="download--loading--map--number-of-downloaded-scenes-by-users",
+        type="circle",
+        color=colors['text'],
+        children=[
+            # leaflet map - my code
+            Div([
+                # title
+                P(
+                    children='Map - Number of Downloaded Scenes by User in a specific location (long/lat)',
+                    style={
+                        'textAlign': 'left',
+                        'color': colors['text']
+                    }
+                ),
+                Map(
+                    [
+                        # tile layer
+                        TileLayer(),
+                        # markers
+                        GeoJSON(
+                            id="download--map--number-of-downloaded-scenes-by-users",
+                            cluster=True,  # when true, data are clustered
+                            zoomToBounds=True,  # when true, zooms to bounds when data changes
+                            clusterToLayer=scatter.cluster_to_layer,  # how to draw clusters
+                            zoomToBoundsOnClick=True,  # when true, zooms to bounds of feature (e.g. cluster) on click
+                            options={
+                                # how to draw points
+                                'pointToLayer': scatter.point_to_layer
+                            },
+                            superClusterOptions={
+                                # adjust cluster size
+                                'radius': 150
+                            },
+                            hideout={
+                                'colorscale': csc_map[default_csc],
+                                'color_prop': color_prop,
+                                **minmax
+                            }
+                        ),
+                        # *arrows,
+                        Colorbar(
+                            id="download--map--colorbar",
+                            colorscale=csc_map[default_csc],
+                            width=20,
+                            height=150,
+                            **minmax
+                        )
+                    ],
+                    zoom=5,
+                    center=(-15.0, -55.0),
+                    style={'width': '100%', 'height': '80vh', 'margin': "auto", "display": "block"},
+                ),
+                Div(
+                    Dropdown(
+                        id="download--map--dropdown--color-scale",
+                        options=csc_options,
+                        value=dumps(csc_map[default_csc]),
+                        clearable=False
+                    ),
+                    style={"position": "relative", "bottom": "80px", "left": "10px", "z-index": "1000", "width": "200px"}
+                ),
+                ],
+                # style={'width': '100%', 'height': '100vh', 'margin': "auto", "display": "block"}
+            ),
+        ]
+    ),
+
+    # graph
     Loading(
         id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-users",
         type="circle",

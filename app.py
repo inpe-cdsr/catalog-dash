@@ -8,6 +8,9 @@ url_base_pathname = '/catalog-dash'
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+# dash-leaflet uses it
+external_scripts = ['https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js']
+
 server = Flask(__name__)
 
 
@@ -27,6 +30,7 @@ app = Dash(
     __name__,
     server=server,
     external_stylesheets=external_stylesheets,
+    external_scripts=external_scripts,
     suppress_callback_exceptions=True,
     url_base_pathname='{}/'.format(url_base_pathname)
 )
