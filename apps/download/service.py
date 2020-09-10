@@ -89,26 +89,30 @@ def get_minmax_from_df(df, key='amount'):
 # callback services
 ##################################################
 
-def __create_sub_df_based_on_parameters(df, start_date, end_date, limit):
+def __convert_dates_from_str_to_date(start_date, end_date):
     # convert the [start|end]_date from str to date
     start_date = dt.strptime(start_date.split('T')[0], '%Y-%m-%d').date()
     end_date = dt.strptime(end_date.split('T')[0], '%Y-%m-%d').date()
 
+    return start_date, end_date
+
+
+def __create_sub_df_based_on_parameters(df, start_date, end_date, limit):
     # get a sub set from the df according to the selected date range
-    df_copy = df[
+    sub_df = df[
         ((df['date'] >= start_date) & (df['date'] <= end_date))
     ]
 
     # reset the indexes to avoid the pandas warning related to SettingWithCopyWarning
-    df_copy.reset_index(drop=True, inplace=True)
+    sub_df.reset_index(drop=True, inplace=True)
 
     # return the elements based on the limit, if it is possible
-    if limit > 0 and limit < len(df_copy.index):
-        df_copy = df_copy.iloc[:limit]
+    if limit > 0 and limit < len(sub_df.index):
+        sub_df = sub_df.iloc[:limit]
 
-    df_copy['date'] = df_copy['date'].astype(str)
+    sub_df['date'] = sub_df['date'].astype(str)
 
-    return df_copy
+    return sub_df
 
 
 def __get_geojson_data(df):

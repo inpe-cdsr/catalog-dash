@@ -10,8 +10,9 @@ from app import app
 from modules.logging import logging
 
 from apps.download.layout import *
-from apps.download.service import __create_sub_df_based_on_parameters, __get_geojson_data, \
-                                  color_prop, get_minmax_from_df
+from apps.download.service import __convert_dates_from_str_to_date, \
+                                  __create_sub_df_based_on_parameters, \
+                                  __get_geojson_data, color_prop, get_minmax_from_df
 from apps.service import __get_date_picker_range_message, \
                          __get_figure_of_graph_bubble_map_number_of_scenes
 
@@ -33,42 +34,27 @@ def download__update_output_container_date_picker_range(start_date, end_date):
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date'),
     Input('download--input--limit', 'value')])
-def download__update_tables_by_date_picker_range_values(start_date, end_date, limit):
-    logging.info('download__update_tables()')
+def download__update_tables_by_parameters(start_date, end_date, limit):
+    logging.info('download__update_tables_by_parameters()')
 
-    logging.info('download__update_tables() - start_date: %s', start_date)
-    logging.info('download__update_tables() - end_date: %s', end_date)
-    logging.info('download__update_tables() - limit: %s', limit)
+    logging.info('download__update_tables_by_parameters() - start_date: %s', start_date)
+    logging.info('download__update_tables_by_parameters() - end_date: %s', end_date)
+    logging.info('download__update_tables_by_parameters() - limit: %s', limit)
 
     # if limit is None, then the callback returns empty tables
     if limit is None:
         return [], []
 
-    # convert the [start|end]_date from str to date
-    start_date = dt.strptime(start_date.split('T')[0], '%Y-%m-%d').date()
-    end_date = dt.strptime(end_date.split('T')[0], '%Y-%m-%d').date()
+    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
 
-    # create a sub dataframe based on start and end dates
-    sub_df_d_scene_id = df_d_scene_id_date[
-        ((df_d_scene_id_date['date'] >= start_date) & (df_d_scene_id_date['date'] <= end_date))
-    ]
+    sub_df_d_scene_id = __create_sub_df_based_on_parameters(
+        df_d_scene_id_date, start_date, end_date, limit
+    )
 
-    sub_df_d_email = df_d_email_without_location[
-        ((df_d_email_without_location['date'] >= start_date) & (df_d_email_without_location['date'] <= end_date))
-    ]
+    sub_df_d_email = __create_sub_df_based_on_parameters(
+        df_d_email_without_location, start_date, end_date, limit
+    )
 
-    # reset the indexes to avoid the pandas warning related to SettingWithCopyWarning
-    sub_df_d_scene_id.reset_index(drop=True, inplace=True)
-    sub_df_d_email.reset_index(drop=True, inplace=True)
-
-    # return the elements based on the limit, if it is possible
-    if limit > 0 and limit < len(sub_df_d_scene_id.index):
-        sub_df_d_scene_id = sub_df_d_scene_id.iloc[:limit]
-
-    if limit > 0 and limit < len(sub_df_d_email.index):
-        sub_df_d_email = sub_df_d_email.iloc[:limit]
-
-    # return the filtered records to each table
     return sub_df_d_scene_id.to_dict('records'), sub_df_d_email.to_dict('records')
 
 
@@ -77,16 +63,18 @@ def download__update_tables_by_date_picker_range_values(start_date, end_date, li
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date'),
     Input('download--input--limit', 'value')])
-def download__update_charts_by_date_picker_range_values(start_date, end_date, limit):
-    logging.info('download__update_charts()')
+def download__update_chart_by_parameters(start_date, end_date, limit):
+    logging.info('download__update_chart_by_parameters()')
 
-    logging.info('download__update_charts() - start_date: %s', start_date)
-    logging.info('download__update_charts() - end_date: %s', end_date)
-    logging.info('download__update_charts() - limit: %s', limit)
+    logging.info('download__update_chart_by_parameters() - start_date: %s', start_date)
+    logging.info('download__update_chart_by_parameters() - end_date: %s', end_date)
+    logging.info('download__update_chart_by_parameters() - limit: %s', limit)
 
-    # if limit is None, then the callback returns an empty graph
+    # if limit is None, then the callback returns an empty chart
     if limit is None:
         return {"data": [], "layout": {}, "frames": []}
+
+    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
 
     sub_df = __create_sub_df_based_on_parameters(
         df_d_email_scene_id_date, start_date, end_date, limit
@@ -110,16 +98,18 @@ def download__update_charts_by_date_picker_range_values(start_date, end_date, li
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date'),
     Input('download--input--limit', 'value')])
-def download__update_map_by_date_picker_range_values(start_date, end_date, limit):
-    logging.info('download__update_maps()')
+def download__update_map_by_parameters(start_date, end_date, limit):
+    logging.info('download__update_map_by_parameters()')
 
-    logging.info('download__update_maps() - start_date: %s', start_date)
-    logging.info('download__update_maps() - end_date: %s', end_date)
-    logging.info('download__update_maps() - limit: %s', limit)
+    logging.info('download__update_map_by_parameters() - start_date: %s', start_date)
+    logging.info('download__update_map_by_parameters() - end_date: %s', end_date)
+    logging.info('download__update_map_by_parameters() - limit: %s', limit)
 
     # if limit is None, then the callback returns an empty map
     if limit is None:
         return Component.UNDEFINED
+
+    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
 
     sub_df = __create_sub_df_based_on_parameters(
         df_d_email_scene_id_date, start_date, end_date, limit
