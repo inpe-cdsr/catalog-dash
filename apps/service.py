@@ -71,9 +71,9 @@ def extra_logging(df):
         logging.info('extra_logging() - datasets in df_%s: %s\n', year, df_20xx.dataset.unique())
 '''
 
-def filter_df_by(df, group_by=['dataset', 'year_month'], sort_by=None, ascending=True):
+def filter_df_by(df, group_by=['dataset', 'year_month'], to_frame='amount', sort_by=None, ascending=True):
     # group the df by `group_by` and count how many scenes are
-    df = df.groupby(group_by)['scene_id'].count().to_frame('amount').reset_index()
+    df = df.groupby(group_by)['scene_id'].count().to_frame(to_frame).reset_index()
 
     # if someone passes `sort_by` parameter, then I sort the values by it
     if sort_by:

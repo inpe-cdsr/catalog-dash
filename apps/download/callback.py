@@ -52,11 +52,11 @@ def download__update_tables_by_parameters(start_date, end_date, limit):
         df_d_scene_id_date, start_date, end_date, limit
     )
 
-    sub_df_d_email = __create_sub_df_based_on_parameters(
-        df_d_email_without_location, start_date, end_date, limit
+    sub_df_ndsbud = __create_sub_df_based_on_parameters(
+        df_ndsbud, start_date, end_date, limit
     )
 
-    return sub_df_d_scene_id.to_dict('records'), sub_df_d_email.to_dict('records')
+    return sub_df_d_scene_id.to_dict('records'), sub_df_ndsbud.to_dict('records')
 
 
 @app.callback(

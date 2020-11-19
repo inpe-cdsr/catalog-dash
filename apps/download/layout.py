@@ -81,7 +81,7 @@ logging.info('download.layout - df_information.head(): \n%s\n', df_information.h
 
 # I group my df by `scene_id` and `date` to build the table
 df_d_scene_id_date = filter_df_by(
-    df_dd,
+    df_dd_nofbs,
     group_by=['scene_id', 'date'],
     sort_by=['amount', 'date', 'scene_id'],
     ascending=False
@@ -99,8 +99,24 @@ df_d_email_scene_id_date = filter_df_by(
 
 logging.info('download.layout - df_d_email_scene_id_date.head(): \n%s\n', df_d_email_scene_id_date.head())
 
-# remove the 'longitude' and 'latitude' information to build the table
-df_d_email_without_location = df_d_email_scene_id_date[['amount', 'email', 'scene_id', 'date']]
+
+# number of downloaded scenes by user in a date (ndsbud)
+'''
+SELECT COUNT(scene_id) number, user_id, name, date
+FROM `dash_download_nofbs`
+GROUP BY user_id, name, date
+ORDER BY number DESC
+'''
+
+df_ndsbud = filter_df_by(
+    df_dd_nofbs,
+    group_by=['user_id', 'name', 'date'],
+    to_frame='number',
+    sort_by=['number'],
+    ascending=False
+)
+
+logging.info(f'download.layout - df_ndsbud.head(): \n{df_ndsbud.head()}\n')
 
 
 minmax = get_minmax_from_df(df_d_email_scene_id_date)
@@ -164,7 +180,7 @@ layout = Div([
                         id='download--date-picker-range',
                         display_format='DD/MM/YYYY',
                         min_date_allowed=min_start_date,
-                        max_date_allowed=max_end_date,
+                        max_date_allowed=max_end_date + timedelta(days=1),
                         start_date=min_start_date,
                         end_date=min_start_date + timedelta(days=7)
                     )
@@ -238,7 +254,7 @@ layout = Div([
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by email, scene_id and date',
+                children='Table: Number of Downloaded Scenes by user in a date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -247,8 +263,8 @@ layout = Div([
             # table number of download scenes
             DataTable(
                 id='download--table--number-of-downloaded-scenes-by-email-scene_id-date',
-                columns=[{"name": i, "id": i} for i in df_d_email_without_location.columns],
-                data=df_d_email_without_location.to_dict('records'),
+                columns=[{"name": i, "id": i} for i in df_ndsbud.columns],
+                data=df_ndsbud.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
