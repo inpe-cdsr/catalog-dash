@@ -93,10 +93,8 @@ class DatabaseConnection():
 
         return df
 
-    def select_from_download(self):
-        df = self.execute('SELECT * FROM dash_download;')
+    def select_from_dash_download(self):
+        return self.execute('SELECT * FROM dash_download;')
 
-        # convert from `str` to a `datetime` type
-        df['date'] = to_datetime(df['date'])
-
-        return df
+    def select_from_dash_download_nofbs(self):
+        return self.execute('SELECT * FROM dash_download_nofbs;')

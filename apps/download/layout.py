@@ -9,7 +9,7 @@ from dash_table import DataTable
 from dash_leaflet import Colorbar, GeoJSON, Map, TileLayer
 from dash_leaflet.express import scatter
 from numpy import log as np_log
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 
 from apps.download.service import default_csc, color_prop, csc_map, csc_options, get_minmax_from_df
 from apps.service import filter_df_by, get_table_styles
@@ -18,31 +18,59 @@ from modules.model import DatabaseConnection
 from modules.utils import colors
 
 
+##################################################
+# get the dataframes from database
+##################################################
 # database connection
 db = DatabaseConnection()
 
-# create the download dataframe from the Download table in the database
-df_download = db.select_from_download()
+# get the dash download dataframe (df_dd) from the database
+df_dd = db.select_from_dash_download()
 
-df_download['date'] = df_download['date'].dt.date
+# get the dash download nofbs dataframe (df_dd_nofbs) from the database
+# nofbs - number of files by scene
+df_dd_nofbs = db.select_from_dash_download_nofbs()
+
+
+##################################################
+# fix the dataframes
+##################################################
+
+# convert `str` to a `datetime`, and `datetime` to 'date' type
+df_dd['date'] = to_datetime(df_dd['date']).dt.date
 
 logging.info(
-    'download.layout - df_download.head(): \n%s\n',
-    df_download.head()[['id', 'email', 'scene_id', 'date', 'longitude', 'latitude', 'path']]
+    f"download.layout - df_dd.head(): \n"
+    f"{df_dd[['email', 'scene_id', 'date', 'longitude', 'latitude', 'path']].head()}\n"
 )
+# logging.debug(
+#     f"download.layout - df_dd.dtypes: \n{df_dd.dtypes}\n"
+# )
 
+logging.info(
+    f"download.layout - df_dd_nofbs.head(): \n"
+    f"{df_dd_nofbs[['scene_id', 'nofbs', 'email', 'date', 'longitude', 'latitude']].head()}\n"
+)
+# logging.debug(
+#     f"download.layout - df_dd_nofbs.dtypes: \n{df_dd_nofbs.dtypes}\n"
+# )
+
+##################################################
+# get values from dataframe
+##################################################
 
 # get the minimum and maximum dates
-min_start_date = df_download['date'].min()
-max_end_date = df_download['date'].max()
+min_start_date = df_dd_nofbs['date'].min()
+max_end_date = df_dd_nofbs['date'].max()
 
 logging.info('download.layout - min_start_date: %s', min_start_date)
 logging.info('download.layout - max_end_date: %s', max_end_date)
 
 
-# create a df with the information from `df_download`
+# create a df with the information from `df_dd`
 data = [
-    ['Number of downloaded scenes', len(df_download)],
+    ['Number of downloaded scenes', len(df_dd_nofbs)],
+    ['Number of downloaded files', len(df_dd)],
     ['Minimum date', min_start_date],
     ['Maximum date', max_end_date]
 ]
@@ -53,7 +81,7 @@ logging.info('download.layout - df_information.head(): \n%s\n', df_information.h
 
 # I group my df by `scene_id` and `date` to build the table
 df_d_scene_id_date = filter_df_by(
-    df_download,
+    df_dd,
     group_by=['scene_id', 'date'],
     sort_by=['amount', 'date', 'scene_id'],
     ascending=False
@@ -63,7 +91,7 @@ logging.info('download.layout - df_d_scene_id_date.head(): \n%s\n', df_d_scene_i
 
 # I group my df by `email`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
 df_d_email_scene_id_date = filter_df_by(
-    df_download,
+    df_dd,
     group_by=['email', 'scene_id', 'date', 'longitude', 'latitude'],
     sort_by=['amount', 'date', 'email', 'scene_id'],
     ascending=False
