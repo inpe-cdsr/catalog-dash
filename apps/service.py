@@ -71,15 +71,16 @@ def extra_logging(df):
         logging.info('extra_logging() - datasets in df_%s: %s\n', year, df_20xx.dataset.unique())
 '''
 
-def filter_df_by(df, group_by=['dataset', 'year_month'], to_frame='amount', sort_by=None, ascending=True):
+def filter_df_by(df, group_by=['dataset', 'year_month'], count='scene_id',
+                 to_frame='number', sort_by=None, ascending=True):
     # group the df by `group_by` and count how many scenes are
-    df = df.groupby(group_by)['scene_id'].count().to_frame(to_frame).reset_index()
+    df = df.groupby(group_by)[count].count().to_frame(to_frame).reset_index()
 
     # if someone passes `sort_by` parameter, then I sort the values by it
     if sort_by:
         df = df.sort_values(sort_by, ascending=ascending)
 
-    # I get the last column (i.e. 'amount') and I add it to the beginning
+    # I get the last column (i.e. 'number') and I add it to the beginning
     # Source: https://stackoverflow.com/a/13148611
     columns = df.columns.tolist()
     columns = columns[-1:] + columns[:-1]
@@ -129,6 +130,7 @@ def __get_date_picker_range_message(start_date, end_date):
 
 def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascending=True,
                                                       plot_type='scatter_geo', title=None, color=None,
+                                                      size='number',
                                                       animation_frame=None, hover_data=None):
     logging.info('get_figure_of_graph_bubble_map_number_of_scenes()')
 
@@ -148,7 +150,7 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascendin
             lon='longitude',
             lat='latitude',
             color=color,
-            size='amount',
+            size=size,
             hover_data=hover_data,
             animation_frame=animation_frame,
             projection='natural earth',
@@ -177,7 +179,7 @@ def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascendin
             lon='longitude',
             lat='latitude',
             color=color,
-            size='amount',
+            size=size,
             hover_data=hover_data,
             animation_frame=animation_frame,
             zoom=2,

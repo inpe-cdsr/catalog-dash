@@ -161,7 +161,7 @@ layout = Div([
                     min_date_allowed=min_start_date,
                     max_date_allowed=max_end_date,
                     start_date=min_start_date,
-                    end_date=min_start_date + relativedelta(months=3)
+                    end_date=min_start_date + relativedelta(months=1)
                 )
             ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
             P(

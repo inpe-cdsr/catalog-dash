@@ -41,7 +41,7 @@ df_dd['date'] = to_datetime(df_dd['date']).dt.date
 
 logging.info(
     f"download.layout - df_dd.head(): \n"
-    f"{df_dd[['email', 'scene_id', 'date', 'longitude', 'latitude', 'path']].head()}\n"
+    f"{df_dd[['user_id', 'scene_id', 'date', 'longitude', 'latitude', 'path']].head()}\n"
 )
 # logging.debug(
 #     f"download.layout - df_dd.dtypes: \n{df_dd.dtypes}\n"
@@ -49,7 +49,7 @@ logging.info(
 
 logging.info(
     f"download.layout - df_dd_nofbs.head(): \n"
-    f"{df_dd_nofbs[['scene_id', 'nofbs', 'email', 'date', 'longitude', 'latitude']].head()}\n"
+    f"{df_dd_nofbs[['scene_id', 'nofbs', 'user_id', 'date', 'longitude', 'latitude']].head()}\n"
 )
 # logging.debug(
 #     f"download.layout - df_dd_nofbs.dtypes: \n{df_dd_nofbs.dtypes}\n"
@@ -79,15 +79,15 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
 
-# I group my df by `email`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
-df_d_email_scene_id_date = filter_df_by(
-    df_dd,
-    group_by=['email', 'scene_id', 'date', 'longitude', 'latitude'],
-    sort_by=['amount', 'date', 'email', 'scene_id'],
+# this df contains all columns I need to build the tables and graphs
+df_d_base = filter_df_by(
+    df_dd_nofbs,
+    group_by=['user_id', 'name', 'date', 'longitude', 'latitude'],
+    sort_by=['number'],
     ascending=False
 )
 
-logging.info('download.layout - df_d_email_scene_id_date.head(): \n%s\n', df_d_email_scene_id_date.head())
+logging.info('download.layout - df_d_base.head(): \n%s\n', df_d_base.head())
 
 
 # number of downloaded scenes by user and date (ndsb_user_date)
@@ -101,7 +101,6 @@ ORDER BY number DESC
 df_ndsb_user_date = filter_df_by(
     df_dd_nofbs,
     group_by=['user_id', 'name', 'date'],
-    to_frame='number',
     sort_by=['number'],
     ascending=False
 )
@@ -109,7 +108,7 @@ df_ndsb_user_date = filter_df_by(
 logging.info(f'download.layout - df_ndsb_user_date.head(): \n{df_ndsb_user_date.head()}\n')
 
 
-minmax = get_minmax_from_df(df_d_email_scene_id_date)
+minmax = get_minmax_from_df(df_d_base)
 
 
 layout = Div([

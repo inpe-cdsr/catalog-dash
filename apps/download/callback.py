@@ -18,7 +18,7 @@ from apps.service import __get_date_picker_range_message, \
                          __get_figure_of_graph_bubble_map_number_of_scenes
 
 
-minmax = get_minmax_from_df(df_d_email_scene_id_date)
+minmax = get_minmax_from_df(df_d_base)
 
 
 @app.callback(
@@ -86,7 +86,7 @@ def download__update_map_by_parameters(start_date, end_date, limit):
         return dicts_to_geojson([])
 
     sub_df = __create_sub_df_based_on_parameters(
-        df_d_email_scene_id_date, start_date, end_date, limit
+        df_d_base, start_date, end_date, limit
     )
 
     # build the geojson object with a list of markers
@@ -112,14 +112,14 @@ def download__update_chart_by_parameters(start_date, end_date, limit):
         return {"data": [], "layout": {}, "frames": []}
 
     sub_df = __create_sub_df_based_on_parameters(
-        df_d_email_scene_id_date, start_date, end_date, limit
+        df_d_base, start_date, end_date, limit
     )
 
     return __get_figure_of_graph_bubble_map_number_of_scenes(
         sub_df,
         sort_by=['date'],
         title='Graph - Number of Downloaded Scenes by User in a specific location (long/lat)',
-        color='email',
+        color='user_id',
         # animation_frame='date',
         hover_data=['date'],
         plot_type='scatter_mapbox'

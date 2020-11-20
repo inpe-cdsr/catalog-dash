@@ -71,10 +71,10 @@ csc_options = [
 ]
 default_csc = "Hot"
 
-color_prop='amount'
+color_prop='number'
 
 
-def get_minmax_from_df(df, key='amount'):
+def get_minmax_from_df(df, key='number'):
     # return {
     #     'min': np_log(df[key].min()),
     #     'max': np_log(df[key].max())
@@ -123,14 +123,13 @@ def __get_geojson_data(df):
     )
     df['popup'] = df.apply(
         lambda row: '''
-            E-mail: {}<br>
-            Amount: {}<br>
-            Scene ID: {}<br>
+            User ID: {}<br>
+            Number: {}<br>
             Date: {}<br>
             Latitude: {}<br>
             Longitude: {}
         '''.format(
-            row["email"], row["amount"], row["scene_id"], row["date"], row["latitude"], row["longitude"]
+            row["user_id"], row["number"], row["date"], row["latitude"], row["longitude"]
         ),
         axis=1
     )

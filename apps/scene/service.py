@@ -47,7 +47,7 @@ def get_figure_of_graph_bar_plot_number_of_scenes(df, xaxis_range=[], title=None
     for dataset in df_copy['dataset'].unique():
         sub_df = df_copy[(df_copy['dataset'] == dataset) & logical_date_range]
 
-        hovertext = 'Number of Scenes: ' + sub_df['amount'].map(str) + '<br>' + \
+        hovertext = 'Number of Scenes: ' + sub_df['number'].map(str) + '<br>' + \
                     'Period: ' + sub_df['year_month'].map(str) + '<br>' + \
                     'Dataset: ' + sub_df['dataset'].map(str)
 
@@ -55,9 +55,9 @@ def get_figure_of_graph_bar_plot_number_of_scenes(df, xaxis_range=[], title=None
             Bar(
                 {
                     'x': sub_df['year_month'],
-                    'y': sub_df['amount'],
+                    'y': sub_df['number'],
                     'name': dataset,
-                    'text': sub_df['amount'],  # text inside the bar
+                    'text': sub_df['number'],  # text inside the bar
                     'textposition': 'auto',
                     'hovertext': hovertext,
                 }
