@@ -96,39 +96,6 @@ def download__update_map_by_parameters(start_date, end_date, limit):
     return __get_geojson_data(sub_df)
 
 
-# @app.callback(
-#     Output('download--graph--bubble-map--number-of-downloaded-scenes-by-location', 'figure'),
-#     [Input('download--date-picker-range', 'start_date'),
-#     Input('download--date-picker-range', 'end_date'),
-#     Input('download--input--limit', 'value')])
-# def download__update_chart_by_parameters(start_date, end_date, limit):
-#     logging.info('download__update_chart_by_parameters()')
-
-#     logging.info('download__update_chart_by_parameters() - start_date: %s', start_date)
-#     logging.info('download__update_chart_by_parameters() - end_date: %s', end_date)
-#     logging.info('download__update_chart_by_parameters() - limit: %s', limit)
-
-#     start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
-
-#     # if start date is greater than end date or limit is None, then the callback returns an empty object
-#     if start_date > end_date or limit is None:
-#         return {"data": [], "layout": {}, "frames": []}
-
-#     sub_df = __create_sub_df_based_on_parameters(
-#         df_d_base, start_date, end_date, limit
-#     )
-
-#     return __get_figure_of_graph_bubble_map_number_of_scenes(
-#         sub_df,
-#         sort_by=['date'],
-#         title='Graph - Number of Downloaded Scenes by User in a specific location (long/lat)',
-#         color='user_id',
-#         # animation_frame='date',
-#         hover_data=['date'],
-#         plot_type='scatter_mapbox'
-#     )
-
-
 @app.callback(
     [Output("download--map--number-of-downloaded-scenes-by-location", "hideout"),
     Output("download--map--colorbar", "colorscale"),

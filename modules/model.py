@@ -93,8 +93,8 @@ class DatabaseConnection():
 
         return df
 
-    def select_from_dash_download(self):
-        return self.execute('SELECT * FROM dash_download;')
+    # def select_from_dash_download(self):
+    #     return self.execute('SELECT * FROM dash_download;')
 
     def select_from_dash_download_nofbs(self):
         return self.execute('SELECT * FROM dash_download_nofbs;')

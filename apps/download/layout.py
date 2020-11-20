@@ -24,9 +24,6 @@ from modules.utils import colors
 # database connection
 db = DatabaseConnection()
 
-# get the dash download dataframe (df_dd) from the database
-df_dd = db.select_from_dash_download()
-
 # get the dash download nofbs dataframe (df_dd_nofbs) from the database
 # nofbs - number of downloaded assets by scene
 df_dd_nofbs = db.select_from_dash_download_nofbs()
@@ -37,15 +34,7 @@ df_dd_nofbs = db.select_from_dash_download_nofbs()
 ##################################################
 
 # convert `str` to a `datetime`, and `datetime` to 'date' type
-df_dd['date'] = to_datetime(df_dd['date']).dt.date
-
-logging.info(
-    f"download.layout - df_dd.head(): \n"
-    f"{df_dd[['user_id', 'scene_id', 'date', 'longitude', 'latitude', 'path']].head()}\n"
-)
-# logging.debug(
-#     f"download.layout - df_dd.dtypes: \n{df_dd.dtypes}\n"
-# )
+# df_dd_nofbs['date'] = to_datetime(df_dd_nofbs['date']).dt.date
 
 logging.info(
     f"download.layout - df_dd_nofbs.head(): \n"
@@ -59,18 +48,20 @@ logging.info(
 # get values from dataframe
 ##################################################
 
-# get the minimum and maximum dates
+# get the minimum and maximum dates, and the number of downloaded assets
 min_start_date = df_dd_nofbs['date'].min()
 max_end_date = df_dd_nofbs['date'].max()
+number_of_downloaded_assets = df_dd_nofbs['nofbs'].sum()
 
-logging.info('download.layout - min_start_date: %s', min_start_date)
-logging.info('download.layout - max_end_date: %s', max_end_date)
+logging.info(f'download.layout - min_start_date: {min_start_date}')
+logging.info(f'download.layout - max_end_date: {max_end_date}')
+logging.info(f'download.layout - number_of_downloaded_assets: {number_of_downloaded_assets}')
 
 
-# create a df with the information from `df_dd`
+# create the information dataframe
 data = [
     ['Number of downloaded scenes', len(df_dd_nofbs)],
-    ['Number of downloaded assets', len(df_dd)],
+    ['Number of downloaded assets', number_of_downloaded_assets],
     ['Minimum date', min_start_date],
     ['Maximum date', max_end_date]
 ]
@@ -314,16 +305,5 @@ layout = Div([
                 # style={'width': '100%', 'height': '100vh', 'margin': "auto", "display": "block"}
             ),
         ]
-    ),
-
-    # graph
-    # Loading(
-    #     id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-location",
-    #     type="circle",
-    #     color=colors['text'],
-    #     children=[
-    #         # download--graph--bubble-map--number-of-downloaded-scenes-by-location
-    #         Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-location')
-    #     ]
-    # )
+    )
 ])
