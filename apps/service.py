@@ -43,7 +43,7 @@ def get_table_styles():
         'style_cell': {
             'textAlign': 'left',
             'minWidth': '100px',
-            'backgroundColor': 'rgb(65, 65, 65)',
+            'backgroundColor': '#404040',
             'color': 'white'
         }
     }
@@ -126,6 +126,38 @@ def __get_date_picker_range_message(start_date, end_date):
         return 'Select a date to see it displayed here'
 
     return message
+
+
+def __get_figure_of_number_of_downloaded_scenes_time_series(df, x='date', y='number', title='Time Series'):
+
+    figure_height = 800
+
+    fig = px.line(df, x=x, y=y, title=title, height=figure_height)
+
+    fig.update_xaxes(
+        rangeslider_visible=True,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="YTD", step="year", stepmode="todate"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
+                dict(step="all")
+            ]),
+            font=dict(color="black"),
+            bgcolor=colors['text']
+        )
+    )
+
+    fig.update_layout(
+        plot_bgcolor='#404040',
+        paper_bgcolor=colors['background'],
+        font={'color': colors['text']},
+        xaxis={'title': 'Date'},
+        yaxis={'title': 'Number of Downloaded Scenes'},
+    )
+
+    return fig
 
 
 def __get_figure_of_graph_bubble_map_number_of_scenes(df, sort_by=None, ascending=True,

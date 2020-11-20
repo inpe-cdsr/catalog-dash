@@ -37,7 +37,7 @@ df_dd_nofbs = db.select_from_dash_download_nofbs()
 # df_dd_nofbs['date'] = to_datetime(df_dd_nofbs['date']).dt.date
 
 logging.info(
-    f"download.layout - df_dd_nofbs.head(): \n"
+    "download.layout - df_dd_nofbs.head(): \n"
     f"{df_dd_nofbs[['scene_id', 'nofbs', 'user_id', 'date', 'longitude', 'latitude']].head()}\n"
 )
 # logging.debug(
@@ -67,7 +67,7 @@ data = [
 ]
 df_information = DataFrame(data, columns=['information', 'value'])
 
-logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
+logging.info(f'download.layout - df_information.head(): \n{df_information.head()}\n')
 
 
 # df_d_base - number of downloaded scenes by user, date and long/lat
@@ -79,7 +79,7 @@ df_d_base = filter_df_by(
     ascending=False
 )
 
-logging.info('download.layout - df_d_base.head(): \n%s\n', df_d_base.head())
+logging.info(f'download.layout - df_d_base.head(): \n{df_d_base.head()}\n')
 
 
 minmax = get_minmax_from_df(df_d_base)
@@ -122,7 +122,7 @@ layout = Div([
                     id='table--information',
                     columns=[{"name": i, "id": i} for i in df_information.columns],
                     data=df_information.to_dict('records'),
-                    fixed_rows={ 'headers': True, 'data': 0 },
+                    fixed_rows={'headers': True, 'data': 0},
                     **get_table_styles()
                 ),
             ], style={'max-width': '400px'}),
@@ -238,6 +238,16 @@ layout = Div([
         ], style={'width': '70%', 'padding': '10px'})
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
+    # graph
+    Loading(
+        id="download--loading--graph--time-series--number-of-downloaded-scenes-by-date",
+        type="circle",
+        color=colors['text'],
+        children=[
+            Graph(id='download--graph--graph--time-series--number-of-downloaded-scenes-by-date')
+        ]
+    ),
+
     # map
     Loading(
         id="download--loading--map--number-of-downloaded-scenes-by-location",
@@ -248,7 +258,7 @@ layout = Div([
             Div([
                 # title
                 P(
-                    children='Map - Number of Downloaded Scenes by location (long/lat)',
+                    children='Map: Number of Downloaded Scenes by Location (long/lat)',
                     style={
                         'textAlign': 'left',
                         'color': colors['text']
@@ -300,10 +310,10 @@ layout = Div([
                         clearable=False
                     ),
                     style={"position": "relative", "bottom": "80px", "left": "10px", "z-index": "1000", "width": "200px"}
-                ),
-                ],
+                )
+                ]
                 # style={'width': '100%', 'height': '100vh', 'margin': "auto", "display": "block"}
-            ),
+            )
         ]
     )
 ])

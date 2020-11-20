@@ -15,7 +15,7 @@ from apps.download.service import __convert_dates_from_str_to_date, \
                                   __create_sub_df_based_on_parameters, \
                                   __get_geojson_data, color_prop, get_minmax_from_df
 from apps.service import __get_date_picker_range_message, \
-                         __get_figure_of_graph_bubble_map_number_of_scenes
+                         __get_figure_of_number_of_downloaded_scenes_time_series
 
 
 minmax = get_minmax_from_df(df_d_base)
@@ -68,6 +68,38 @@ def download__update_tables_by_parameters(start_date, end_date, limit):
 
     return sub_df_ndsb_date.to_dict('records'), \
            sub_df_ndsb_user_date.to_dict('records')
+
+
+@app.callback(
+    Output('download--graph--graph--time-series--number-of-downloaded-scenes-by-date', 'figure'),
+    [Input('download--date-picker-range', 'start_date'),
+    Input('download--date-picker-range', 'end_date'),
+    Input('download--input--limit', 'value')])
+def download__update_chart_by_parameters(start_date, end_date, limit):
+    logging.info('download__update_chart_by_parameters()')
+
+    logging.info('download__update_chart_by_parameters() - start_date: %s', start_date)
+    logging.info('download__update_chart_by_parameters() - end_date: %s', end_date)
+    logging.info('download__update_chart_by_parameters() - limit: %s', limit)
+
+    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
+
+    # if start date is greater than end date or limit is None, then the callback returns an empty object
+    if start_date > end_date or limit is None:
+        return {"data": [], "layout": {}, "frames": []}
+
+    sub_df = __create_sub_df_based_on_parameters(
+        df_d_base, start_date, end_date, limit
+    )
+
+    # filter the previous dataframe to get the number of downloaded scenes by date only
+    sub_df = sub_df.groupby(['date'])['number'].sum().to_frame('number').reset_index()
+    sub_df = sub_df.sort_values(['date'], ascending=True)
+
+    return __get_figure_of_number_of_downloaded_scenes_time_series(
+        sub_df,
+        title='Time Series: Number of Download Scenes by Date'
+    )
 
 
 @app.callback(
