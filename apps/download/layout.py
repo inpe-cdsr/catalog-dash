@@ -28,7 +28,7 @@ db = DatabaseConnection()
 df_dd = db.select_from_dash_download()
 
 # get the dash download nofbs dataframe (df_dd_nofbs) from the database
-# nofbs - number of files by scene
+# nofbs - number of downloaded assets by scene
 df_dd_nofbs = db.select_from_dash_download_nofbs()
 
 
@@ -70,7 +70,7 @@ logging.info('download.layout - max_end_date: %s', max_end_date)
 # create a df with the information from `df_dd`
 data = [
     ['Number of downloaded scenes', len(df_dd_nofbs)],
-    ['Number of downloaded files', len(df_dd)],
+    ['Number of downloaded assets', len(df_dd)],
     ['Minimum date', min_start_date],
     ['Maximum date', max_end_date]
 ]
@@ -78,16 +78,6 @@ df_information = DataFrame(data, columns=['information', 'value'])
 
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
-
-# I group my df by `scene_id` and `date` to build the table
-df_d_scene_id_date = filter_df_by(
-    df_dd_nofbs,
-    group_by=['scene_id', 'date'],
-    sort_by=['amount', 'date', 'scene_id'],
-    ascending=False
-)
-
-logging.info('download.layout - df_d_scene_id_date.head(): \n%s\n', df_d_scene_id_date.head())
 
 # I group my df by `email`, `scene_id`, `date`, `longitude`, `latitude` to build the graph
 df_d_email_scene_id_date = filter_df_by(
@@ -100,7 +90,7 @@ df_d_email_scene_id_date = filter_df_by(
 logging.info('download.layout - df_d_email_scene_id_date.head(): \n%s\n', df_d_email_scene_id_date.head())
 
 
-# number of downloaded scenes by user in a date (ndsbud)
+# number of downloaded scenes by user and date (ndsb_user_date)
 '''
 SELECT COUNT(scene_id) number, user_id, name, date
 FROM `dash_download_nofbs`
@@ -108,7 +98,7 @@ GROUP BY user_id, name, date
 ORDER BY number DESC
 '''
 
-df_ndsbud = filter_df_by(
+df_ndsb_user_date = filter_df_by(
     df_dd_nofbs,
     group_by=['user_id', 'name', 'date'],
     to_frame='number',
@@ -116,7 +106,7 @@ df_ndsbud = filter_df_by(
     ascending=False
 )
 
-logging.info(f'download.layout - df_ndsbud.head(): \n{df_ndsbud.head()}\n')
+logging.info(f'download.layout - df_ndsb_user_date.head(): \n{df_ndsb_user_date.head()}\n')
 
 
 minmax = get_minmax_from_df(df_d_email_scene_id_date)
@@ -204,7 +194,7 @@ layout = Div([
             Div([
                 # limit
                 P(
-                    children='Limit (max. 3000):',
+                    children='Limit (max. 1000):',
                     style={
                         'textAlign': 'center',
                         'color': colors['text'],
@@ -215,10 +205,10 @@ layout = Div([
                 dcc_Input(
                     id="download--input--limit",
                     type="number",
-                    placeholder="Limit (max. 3000)",
+                    placeholder="Limit (max. 1000)",
                     value=100,
                     min=1,
-                    max=3000
+                    max=1000
                 )
             ], style={'padding': '10px'}),
         ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
@@ -226,11 +216,11 @@ layout = Div([
 
     # tables
     Div([
-        # left div - table number of downloaded scenes
+        # left div - table number of downloaded scenes by date
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by scene_id and date',
+                children='Table: Number of Downloaded Scenes by date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -238,9 +228,9 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='download--table--number-of-downloaded-scenes-by-scene_id-date',
-                columns=[{"name": i, "id": i} for i in df_d_scene_id_date.columns],
-                data=df_d_scene_id_date.to_dict('records'),
+                id='download--table--number-of-downloaded-scenes-by-date',
+                columns=[{"name": i, "id": i} for i in ('number', 'date')],
+                data=[],
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
@@ -248,13 +238,13 @@ layout = Div([
                 filter_action='native',
                 page_size=50,
             ),
-        ], style={'width': '40%', 'padding': '10px'}),
+        ], style={'width': '30%', 'padding': '10px'}),
 
-        # right div - table number of downloaded scenes by user
+        # right div - table number of downloaded scenes by user and date
         Div([
             # title
             P(
-                children='Table: Number of Downloaded Scenes by user in a date',
+                children='Table: Number of Downloaded Scenes by user and date',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -262,9 +252,9 @@ layout = Div([
             ),
             # table number of download scenes
             DataTable(
-                id='download--table--number-of-downloaded-scenes-by-email-scene_id-date',
-                columns=[{"name": i, "id": i} for i in df_ndsbud.columns],
-                data=df_ndsbud.to_dict('records'),
+                id='download--table--number-of-downloaded-scenes-by-user-and-date',
+                columns=[{"name": i, "id": i} for i in df_ndsb_user_date.columns],
+                data=df_ndsb_user_date.to_dict('records'),
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
@@ -272,7 +262,7 @@ layout = Div([
                 filter_action='native',
                 page_size=50,
             ),
-        ], style={'width': '60%', 'padding': '10px'})
+        ], style={'width': '70%', 'padding': '10px'})
     ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 
     # map

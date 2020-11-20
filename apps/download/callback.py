@@ -30,8 +30,8 @@ def download__update_output_container_date_picker_range(start_date, end_date):
 
 
 @app.callback(
-    [Output('download--table--number-of-downloaded-scenes-by-scene_id-date', 'data'),
-    Output('download--table--number-of-downloaded-scenes-by-email-scene_id-date', 'data')],
+    [Output('download--table--number-of-downloaded-scenes-by-date', 'data'),
+    Output('download--table--number-of-downloaded-scenes-by-user-and-date', 'data')],
     [Input('download--date-picker-range', 'start_date'),
     Input('download--date-picker-range', 'end_date'),
     Input('download--input--limit', 'value')])
@@ -48,15 +48,17 @@ def download__update_tables_by_parameters(start_date, end_date, limit):
     if start_date > end_date or limit is None:
         return [], []
 
-    sub_df_d_scene_id = __create_sub_df_based_on_parameters(
-        df_d_scene_id_date, start_date, end_date, limit
+    # filter number of downloaded scenes by user and date dataframe based on start date, end date and limit
+    sub_df_ndsb_user_date = __create_sub_df_based_on_parameters(
+        df_ndsb_user_date, start_date, end_date, limit
     )
 
-    sub_df_ndsbud = __create_sub_df_based_on_parameters(
-        df_ndsbud, start_date, end_date, limit
-    )
+    # build the number of downloaded scenes by date dataframe based on
+    # the number of downloaded scenes by user and date dataframe
+    sub_df_ndsb_date = sub_df_ndsb_user_date.groupby(['date'])['number'].sum().to_frame('number').reset_index()
+    sub_df_ndsb_date = sub_df_ndsb_date.sort_values(['number'], ascending=False)
 
-    return sub_df_d_scene_id.to_dict('records'), sub_df_ndsbud.to_dict('records')
+    return sub_df_ndsb_date.to_dict('records'), sub_df_ndsb_user_date.to_dict('records')
 
 
 @app.callback(
