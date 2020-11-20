@@ -58,7 +58,39 @@ def download__update_tables_by_parameters(start_date, end_date, limit):
     sub_df_ndsb_date = sub_df_ndsb_user_date.groupby(['date'])['number'].sum().to_frame('number').reset_index()
     sub_df_ndsb_date = sub_df_ndsb_date.sort_values(['number'], ascending=False)
 
-    return sub_df_ndsb_date.to_dict('records'), sub_df_ndsb_user_date.to_dict('records')
+    # I get the last column and I add it to the beginning
+    columns_df_ndsb_date = sub_df_ndsb_date.columns.tolist()
+    columns_df_ndsb_date = columns_df_ndsb_date[-1:] + columns_df_ndsb_date[:-1]
+    sub_df_ndsb_date = sub_df_ndsb_date[columns_df_ndsb_date]
+
+    return sub_df_ndsb_date.to_dict('records'), \
+           sub_df_ndsb_user_date.to_dict('records')
+
+
+@app.callback(
+    Output('download--map--number-of-downloaded-scenes-by-users', 'data'),
+    [Input('download--date-picker-range', 'start_date'),
+    Input('download--date-picker-range', 'end_date'),
+    Input('download--input--limit', 'value')])
+def download__update_map_by_parameters(start_date, end_date, limit):
+    logging.info('download__update_map_by_parameters()')
+
+    logging.info('download__update_map_by_parameters() - start_date: %s', start_date)
+    logging.info('download__update_map_by_parameters() - end_date: %s', end_date)
+    logging.info('download__update_map_by_parameters() - limit: %s', limit)
+
+    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
+
+    # if start date is greater than end date or limit is None, then the callback returns an empty object
+    if start_date > end_date or limit is None:
+        return dicts_to_geojson([])
+
+    sub_df = __create_sub_df_based_on_parameters(
+        df_d_email_scene_id_date, start_date, end_date, limit
+    )
+
+    # build the geojson object with a list of markers
+    return __get_geojson_data(sub_df)
 
 
 @app.callback(
@@ -92,32 +124,6 @@ def download__update_chart_by_parameters(start_date, end_date, limit):
         hover_data=['date'],
         plot_type='scatter_mapbox'
     )
-
-
-@app.callback(
-    Output('download--map--number-of-downloaded-scenes-by-users', 'data'),
-    [Input('download--date-picker-range', 'start_date'),
-    Input('download--date-picker-range', 'end_date'),
-    Input('download--input--limit', 'value')])
-def download__update_map_by_parameters(start_date, end_date, limit):
-    logging.info('download__update_map_by_parameters()')
-
-    logging.info('download__update_map_by_parameters() - start_date: %s', start_date)
-    logging.info('download__update_map_by_parameters() - end_date: %s', end_date)
-    logging.info('download__update_map_by_parameters() - limit: %s', limit)
-
-    start_date, end_date = __convert_dates_from_str_to_date(start_date, end_date)
-
-    # if start date is greater than end date or limit is None, then the callback returns an empty object
-    if start_date > end_date or limit is None:
-        return dicts_to_geojson([])
-
-    sub_df = __create_sub_df_based_on_parameters(
-        df_d_email_scene_id_date, start_date, end_date, limit
-    )
-
-    # build the geojson object with a list of markers
-    return __get_geojson_data(sub_df)
 
 
 @app.callback(
