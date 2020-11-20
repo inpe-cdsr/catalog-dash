@@ -79,7 +79,8 @@ df_information = DataFrame(data, columns=['information', 'value'])
 logging.info('download.layout - df_information.head(): \n%s\n', df_information.head())
 
 
-# this df contains all columns I need to build the tables and graphs
+# df_d_base - number of downloaded scenes by user, date and long/lat
+# this df contains all columns I need to build the tables and charts
 df_d_base = filter_df_by(
     df_dd_nofbs,
     group_by=['user_id', 'name', 'date', 'longitude', 'latitude'],
@@ -88,24 +89,6 @@ df_d_base = filter_df_by(
 )
 
 logging.info('download.layout - df_d_base.head(): \n%s\n', df_d_base.head())
-
-
-# number of downloaded scenes by user and date (ndsb_user_date)
-'''
-SELECT COUNT(scene_id) number, user_id, name, date
-FROM `dash_download_nofbs`
-GROUP BY user_id, name, date
-ORDER BY number DESC
-'''
-
-df_ndsb_user_date = filter_df_by(
-    df_dd_nofbs,
-    group_by=['user_id', 'name', 'date'],
-    sort_by=['number'],
-    ascending=False
-)
-
-logging.info(f'download.layout - df_ndsb_user_date.head(): \n{df_ndsb_user_date.head()}\n')
 
 
 minmax = get_minmax_from_df(df_d_base)
@@ -252,8 +235,8 @@ layout = Div([
             # table number of download scenes
             DataTable(
                 id='download--table--number-of-downloaded-scenes-by-user-and-date',
-                columns=[{"name": i, "id": i} for i in df_ndsb_user_date.columns],
-                data=df_ndsb_user_date.to_dict('records'),
+                columns=[{"name": i, "id": i} for i in ('number', 'user_id', 'name', 'date')],
+                data=[],
                 fixed_rows={ 'headers': True, 'data': 0 },
                 **get_table_styles(),
                 sort_action='native',
@@ -266,7 +249,7 @@ layout = Div([
 
     # map
     Loading(
-        id="download--loading--map--number-of-downloaded-scenes-by-users",
+        id="download--loading--map--number-of-downloaded-scenes-by-location",
         type="circle",
         color=colors['text'],
         children=[
@@ -274,7 +257,7 @@ layout = Div([
             Div([
                 # title
                 P(
-                    children='Map - Number of Downloaded Scenes by User in a specific location (long/lat)',
+                    children='Map - Number of Downloaded Scenes by location (long/lat)',
                     style={
                         'textAlign': 'left',
                         'color': colors['text']
@@ -286,7 +269,7 @@ layout = Div([
                         TileLayer(),
                         # markers
                         GeoJSON(
-                            id="download--map--number-of-downloaded-scenes-by-users",
+                            id="download--map--number-of-downloaded-scenes-by-location",
                             cluster=True,  # when true, data are clustered
                             zoomToBounds=True,  # when true, zooms to bounds when data changes
                             clusterToLayer=scatter.cluster_to_layer,  # how to draw clusters
@@ -334,13 +317,13 @@ layout = Div([
     ),
 
     # graph
-    Loading(
-        id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-users",
-        type="circle",
-        color=colors['text'],
-        children=[
-            # download--graph--bubble-map--number-of-downloaded-scenes-by-users
-            Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-users')
-        ]
-    )
+    # Loading(
+    #     id="download--loading--graph--bubble-map--number-of-downloaded-scenes-by-location",
+    #     type="circle",
+    #     color=colors['text'],
+    #     children=[
+    #         # download--graph--bubble-map--number-of-downloaded-scenes-by-location
+    #         Graph(id='download--graph--bubble-map--number-of-downloaded-scenes-by-location')
+    #     ]
+    # )
 ])
